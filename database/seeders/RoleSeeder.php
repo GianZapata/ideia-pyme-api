@@ -15,6 +15,7 @@ class RoleSeeder extends Seeder
     {
         $userRoleName = 'user';
         $adminRoleName = 'admin';
+        $clientRoleName = 'client';
 
         $userRole = Role::where('name', $userRoleName)->first();
         if (!$userRole) {
@@ -25,5 +26,11 @@ class RoleSeeder extends Seeder
         if (!$adminRole) {
             Role::create(['name' => $adminRoleName]);
         }
+
+        $clientRole = Role::where('name', $clientRoleName)->first();
+        if (!$clientRole) {
+            Role::create(['name' => $clientRoleName]);
+        }
+
     }
 }

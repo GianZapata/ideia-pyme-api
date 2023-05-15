@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationEmailController;
+use App\Http\Controllers\Client\ClientController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -70,4 +71,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         return response()->json(['user' => $request->user() ], 200);
     });
 
+    /** api/clients */
+    Route::group(['prefix' => 'clients'], function () {
+
+        /** Obtener todos los clientes */
+        Route::get('/', [ClientController::class, 'getAll']);
+        Route::get('/id/{id}', [ClientController::class, 'getById']);
+
+        Route::post('/', [ClientController::class, 'store']);
+
+        Route::put('/{id}', [ClientController::class, 'update']);
+    });
 });
