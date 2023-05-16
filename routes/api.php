@@ -76,7 +76,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('/', [ClientController::class, 'getAll'])
             ->name('clients.getAll');
 
-        Route::get('/id/{id}', [ClientController::class, 'getById'])
+        Route::get('/{id}', [ClientController::class, 'getById'])
             ->name('clients.getById');
 
         Route::post('/', [ClientController::class, 'store'])
