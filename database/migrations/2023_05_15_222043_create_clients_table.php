@@ -18,31 +18,31 @@ return new class extends Migration
             $table->float('score', 8, 2)->nullable()->check('score >= 300 and score <= 850');
             $table->string('rfc')->nullable();
 
-            $table->string('name')->nullable(); // Nombre de la Empresa / Persona Fisica Actividad Empresarial:
-            $table->year("anioConstitucion")->nullable(); // Año de constitución:
-            $table->string("sector_actividad")->nullable(); // Sector actividad:
+            $table->string('name'); // Nombre de la Empresa / Persona Física Actividad Empresarial:
+            $table->year("anioConstitucion"); // Año de constitución:
+            $table->string("sector_actividad"); // Sector actividad:
 
             /** Cuenta de resultados */
-            $table->float("ventas")->nullable(); // Ventas
-            $table->float("ventasAnterior")->nullable(); // Ventas Año anterior:
-            $table->float("trabActivo")->nullable(); // Trabajos realizados para el activo
-            $table->float("otrosIng")->nullable(); // Otros ingresos de explotación
-            $table->float("resExplotacion")->nullable(); // Resultado de explotación
-            $table->float("resFinanciero")->nullable(); // Resultado financiero
-            $table->float("resAntesImp")->nullable(); // Resultado antes de impuestos
+            $table->float("ventas"); // Ventas
+            $table->float("ventasAnterior"); // Ventas Año anterior:
+            $table->float("trabActivo"); // Trabajos realizados para el activo
+            $table->float("otrosIng"); // Otros ingresos de explotación
+            $table->float("resExplotacion"); // Resultado de explotación
+            $table->float("resFinanciero"); // Resultado financiero
+            $table->float("resAntesImp"); // Resultado antes de impuestos
 
             /** Activo */
-            $table->float("deudoresComerciales")->nullable(); // Deudores comerciales
-            $table->float("inversionesFin")->nullable(); // Inversiones financieras corto plazo
-            $table->float("efectivoLiquidez")->nullable(); // Efectivo o liquidez
-            $table->float("activoTotal")->nullable(); // Activo Total
+            $table->float("deudoresComerciales"); // Deudores comerciales
+            $table->float("inversionesFin"); // Inversiones financieras corto plazo
+            $table->float("efectivoLiquidez"); // Efectivo o liquidez
+            $table->float("activoTotal"); // Activo Total
 
             /** Pasivo */
-            $table->float("pasivoNoCirculante")->nullable(); // Pasivo no circulante
-            $table->float("provisionesLargoPlazo")->nullable(); // Provisiones a largo plazo
-            $table->float("pasivoCirculante")->nullable(); // Pasivo circulante
-            $table->float("capitalContable")->nullable(); // Capital contable
-            $table->float("prestamosActuales")->nullable(); // Prestamos Actuales
+            $table->float("pasivoNoCirculante"); // Pasivo no circulante
+            $table->float("provisionesLargoPlazo"); // Provisiones a largo plazo
+            $table->float("pasivoCirculante"); // Pasivo circulante
+            $table->float("capitalContable"); // Capital contable
+            $table->float("prestamosActuales"); // Prestamos Actuales
 
             /** Cuantitativo */
             $table->integer("antiguedadEmpresa")->nullable();

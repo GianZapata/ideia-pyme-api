@@ -16,12 +16,18 @@ class Client extends Model
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
 
+    protected array $guard_name = ['api', 'web'];
+
+    protected $appends = [
+        'salud_financiera',
+        'score_cualitativo'
+    ];
+
     protected $fillable = [
         'user_id',
         'name',
         'score',
         'rfc',
-
         'anioConstitucion',
         'sector_actividad',
         'ventas',
@@ -40,13 +46,17 @@ class Client extends Model
         'pasivoCirculante',
         'capitalContable',
         'prestamosActuales',
-
-    ];
-
-    protected array $guard_name = ['api', 'web'];
-
-    protected $appends = [
-        'salud_financiera'
+        'antiguedadEmpresa',
+        'reconocimientoMercado',
+        'informeComercial',
+        'infraestructura',
+        'problemasLegales',
+        'calidadCartera',
+        'referenciasBancarias',
+        'referenciasComerciales',
+        'importanciaMop',
+        'perteneceHolding',
+        'idAnalisis',
     ];
 
     /**
@@ -67,7 +77,14 @@ class Client extends Model
     public function saludFinanciera(): Attribute {
         $financialHealthService = new FinancialHealthService();
         return new Attribute(
-            get: fn () => $financialHealthService->calculate($this)
+            get: fn () => $financialHealthService->calculateFinancialHealth($this)
+        );
+    }
+
+    public function scoreCualitativo(): Attribute {
+        $financialHealthService = new FinancialHealthService();
+        return new Attribute(
+            get: fn () => $financialHealthService->calculateQualitativeScore($this)
         );
     }
 }

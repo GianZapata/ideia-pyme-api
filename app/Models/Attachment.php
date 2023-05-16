@@ -35,17 +35,17 @@ class Attachment extends Model
         'full_path',
     ];
 
-    public function url(string $default = null): ?string
+    public function url(): ?string
     {
         /** @var Filesystem|Cloud $disk */
         $disk = Storage::disk( 'public' );
-        $path = $this->path.$this->name.'.'.$this->extension;
+        $path = "{$this->path}{$this->name}.{$this->extension}";
         return $disk->url( $path );
     }
 
     public function getStoragePathAttribute(): ?string
     {
-        return "public/" . $this->path . $this->name . ".{$this->extension}";
+        return "public/{$this->path}{$this->name}.{$this->extension}";
     }
 
     /**
@@ -83,7 +83,7 @@ class Attachment extends Model
             return $this->original_name;
         }
 
-        return $this->name.'.'.$this->extension;
+        return "{$this->name}.{$this->extension}";
     }
 
 }
