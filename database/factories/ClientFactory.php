@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /**
@@ -11,6 +12,25 @@ use Illuminate\Support\Str;
  */
 class ClientFactory extends Factory
 {
+
+    private static $sectorActividad = [
+        "AGRICULTURA_Y_GANADERIA",
+        "INDUSTRIA_EXTRACTIVA",
+        "INDUSTRIA_MANUFACTURERA",
+        "ENERGIA",
+        "AGUAS_Y_SANEAMIENTO",
+        "CONSTRUCCION",
+        "COMERCIAL",
+        "TRANSPORTE",
+        "HOTELERIA",
+        "COMUNICACIÓN",
+        "FINANZAS_Y_SEGUROS",
+        "ACTIVIDADES_INMOBILIARIAS",
+        "ACTIVIDADES_PROFESIONALES",
+        "OTROS_SERVICIOS",
+        "OTRAS_ACTIVIDADES"
+    ];
+
     /**
      * Define the model's default state.
      *
@@ -19,12 +39,27 @@ class ClientFactory extends Factory
     public function definition(): array
     {
         return [
-            'name'               => fake()->name(),
-            'email'              => fake()->unique()->safeEmail(),
-            'email_verified_at'  => now(),
-            'verification_token' => Str::random(6),
-            'password'           => Hash::make('Abc123456!'),
-            'remember_token'     => Str::random(10),
+            'name'                  => $this->faker->company(),
+            'score'                 => $this->faker->randomFloat(2, 300, 850),
+            'rfc'                   => $this->faker->regexify('[A-Z]{4}[0-9]{6}[A-Z0-9]{3}'),
+            'anioConstitucion'      => $this->faker->year,
+            'sector_actividad'      => $this->faker->randomElement(self::$sectorActividad),
+            'ventas'                => $this->faker->numberBetween(10000, 500000),
+            'ventasAnterior'        => $this->faker->numberBetween(10000, 500000),
+            'trabActivo'            => $this->faker->numberBetween(0, 1000),
+            'otrosIng'              => $this->faker->numberBetween(0, 500000),
+            'resExplotacion'        => $this->faker->numberBetween(0, 500000),
+            'resFinanciero'         => $this->faker->numberBetween(0, 500000),
+            'resAntesImp'           => $this->faker->numberBetween(0, 500000),
+            'deudoresComerciales'   => $this->faker->numberBetween(0, 1000000),
+            'inversionesFin'        => $this->faker->numberBetween(0, 1000000),
+            'efectivoLiquidez'      => $this->faker->numberBetween(0, 1000000),
+            'activoTotal'           => $this->faker->numberBetween(1000000, 500000),
+            'pasivoNoCirculante'    => $this->faker->numberBetween(0, 1000000),
+            'provisionesLargoPlazo' => $this->faker->numberBetween(0, 1000000),
+            'pasivoCirculante'      => $this->faker->numberBetween(0, 1000000),
+            'capitalContable'       => $this->faker->numberBetween(0, 1000000),
+            'prestamosActuales'     => $this->faker->numberBetween(0, 1000000),
         ];
     }
 }

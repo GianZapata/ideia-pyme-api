@@ -28,39 +28,6 @@ return new class extends Migration
             $table->string('rfc')->nullable();
             $table->foreignId('client_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
-
-            /** Data */
-            $table->year("anioConstitucion")->nullable();
-            $table->string("sector_actividad")->nullable();
-            $table->float("ventas")->nullable();
-            $table->float("ventasAnterior")->nullable();
-            $table->boolean("trabActivo")->nullable()->default(false);
-            $table->float("otrosIng")->nullable();
-            $table->float("resExplotacion")->nullable();
-            $table->float("resFinanciero")->nullable();
-            $table->float("resAntesImp")->nullable();
-            $table->float("deudoresComerciales")->nullable();
-            $table->float("inversionesFin")->nullable();
-            $table->float("efectivoLiquidez")->nullable();
-            $table->float("activoTotal")->nullable();
-            $table->float("pasivoNoCirculante")->nullable();
-            $table->float("provisionesLargoPlazo")->nullable();
-            $table->float("pasivoCirculante")->nullable();
-            $table->float("capitalContable")->nullable();
-            $table->float("prestamosActuales")->nullable();
-
-            /** Cuantitativo */
-            $table->integer("antiguedadEmpresa")->nullable();
-            $table->integer("reconocimientoMercado")->nullable();
-            $table->integer("informeComercial")->nullable();
-            $table->integer("infraestructura")->nullable();
-            $table->integer("problemasLegales")->nullable();
-            $table->integer("calidadCartera")->nullable();
-            $table->integer("referenciasBancarias")->nullable();
-            $table->integer("referenciasComerciales")->nullable();
-            $table->integer("importanciaMop")->nullable();
-            $table->integer("perteneceHolding")->nullable();
-            $table->integer("idAnalisis")->nullable();
         });
     }
 

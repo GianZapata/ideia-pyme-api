@@ -64,22 +64,26 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     /** api/check-auth */
     Route::get('/check-auth', function () {
         return response()->json(['message' => 'Autenticado'], 200);
-    });
+    })->name('auth.check');
 
     /** api/profile */
     Route::get('/profile', function( Request $request ){
         return response()->json(['user' => $request->user() ], 200);
-    });
+    })->name('profile');
 
     /** api/clients */
     Route::group(['prefix' => 'clients'], function () {
+        Route::get('/', [ClientController::class, 'getAll'])
+            ->name('clients.getAll');
 
-        /** Obtener todos los clientes */
-        Route::get('/', [ClientController::class, 'getAll']);
-        Route::get('/id/{id}', [ClientController::class, 'getById']);
+        Route::get('/id/{id}', [ClientController::class, 'getById'])
+            ->name('clients.getById');
 
-        Route::post('/', [ClientController::class, 'store']);
+        Route::post('/', [ClientController::class, 'store'])
+            ->name('clients.store');
 
-        Route::put('/{id}', [ClientController::class, 'update']);
+        Route::put('/{id}', [ClientController::class, 'update'])
+            ->name('clients.update');
+
     });
 });

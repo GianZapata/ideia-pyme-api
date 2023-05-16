@@ -16,14 +16,6 @@ class ClientSeeder extends Seeder
     {
 
         /** @var \App\Models\Client $client **/
-        Client::factory(50)->create()->each( function ( $client ) {
-            /** @var \App\Models\ClientProfile $clientProfile **/
-            $clientProfile = ClientProfile::factory()->create([
-                'client_id' => $client->id,
-            ]);
-
-            $client->assignRole('client');
-
-        });
+        Client::factory(50)->create();
     }
 }

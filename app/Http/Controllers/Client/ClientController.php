@@ -20,7 +20,6 @@ class ClientController extends Controller
 
         try {
             $clientRequest = $request->validated();
-
             /** @var \App\Models\User $authUser **/
             $authUser = Auth::user();
             if(!$authUser){
@@ -34,10 +33,28 @@ class ClientController extends Controller
             $authUserId = $authUser->id;
 
             $client = Client::create([
-                'user_id' => $authUserId,
-                'name' => $clientRequest['name'],
-                'email' => $clientRequest['email'],
-                'password' => Hash::make('@')
+                'user_id'               => $authUserId,
+                'name'                  => $clientRequest['name'] ?? null,
+                'score'                 => $clientRequest['score'] ?? null,
+                'rfc'                   => isset($clientRequest['rfc']) ? Str::upper($clientRequest['rfc']) : null,
+                'anioConstitucion'      => $clientRequest['anioConstitucion'] ?? null,
+                'sector_actividad'      => $clientRequest['sector_actividad'] ?? null,
+                'ventas'                => $clientRequest['ventas'] ?? null,
+                'ventasAnterior'        => $clientRequest['ventasAnterior'] ?? null,
+                'trabActivo'            => $clientRequest['trabActivo'] ?? null,
+                'otrosIng'              => $clientRequest['otrosIng'] ?? null,
+                'resExplotacion'        => $clientRequest['resExplotacion'] ?? null,
+                'resFinanciero'         => $clientRequest['resFinanciero'] ?? null,
+                'resAntesImp'           => $clientRequest['resAntesImp'] ?? null,
+                'deudoresComerciales'   => $clientRequest['deudoresComerciales'] ?? null,
+                'inversionesFin'        => $clientRequest['inversionesFin'] ?? null,
+                'efectivoLiquidez'      => $clientRequest['efectivoLiquidez'] ?? null,
+                'activoTotal'           => $clientRequest['activoTotal'] ?? null,
+                'pasivoNoCirculante'    => $clientRequest['pasivoNoCirculante'] ?? null,
+                'provisionesLargoPlazo' => $clientRequest['provisionesLargoPlazo'] ?? null,
+                'pasivoCirculante'      => $clientRequest['pasivoCirculante'] ?? null,
+                'capitalContable'       => $clientRequest['capitalContable'] ?? null,
+                'prestamosActuales'     => $clientRequest['prestamosActuales'] ?? null,
             ]);
 
             if( !$client ){
@@ -48,67 +65,9 @@ class ClientController extends Controller
                 ], 400);
             }
 
-            $client->profile()->create([
-
-                'last_name'              => $clientRequest['lastName'] ?? "",
-                'middle_name'            => $clientRequest['middleName'] ?? "",
-                'rfc'                    => isset($clientRequest['rfc']) ? Str::upper($clientRequest['rfc']) : null,
-                'phone_number'           => $clientRequest['phoneNumber'] ?? null,
-                'street'                 => $clientRequest['street'] ?? null,
-                'house_number'           => $clientRequest['house_number'] ?? null,
-                'neighborhood'           => $clientRequest['neighborhood'] ?? null,
-                'municipality'           => $clientRequest['municipality'] ?? null,
-                'state'                  => $clientRequest['state'] ?? null,
-                'postal_code'            => $clientRequest['postal_code'] ?? null,
-                'country'                => $clientRequest['country'] ?? null,
-                'birth_date'             => $clientRequest['birthDate'] ?? null,
-                'monthly_income'         => $clientRequest['monthlyIncome'] ?? null,
-                'additional_income'      => $clientRequest['additionalIncome'] ?? null,
-
-                // Data
-                'anioConstitucion'       => $clientRequest['anioConstitucion'] ?? null,
-                'sector_actividad'       => $clientRequest['sector_actividad'] ?? null,
-                'ventas'                 => $clientRequest['ventas'] ?? null,
-                'ventasAnterior'         => $clientRequest['ventasAnterior'] ?? null,
-                'trabActivo'             => $clientRequest['trabActivo'] ?? null,
-                'otrosIng'               => $clientRequest['otrosIng'] ?? null,
-                'resExplotacion'         => $clientRequest['resExplotacion'] ?? null,
-                'resFinanciero'          => $clientRequest['resFinanciero'] ?? null,
-                'resAntesImp'            => $clientRequest['resAntesImp'] ?? null,
-                'deudoresComerciales'    => $clientRequest['deudoresComerciales'] ?? null,
-                'inversionesFin'         => $clientRequest['inversionesFin'] ?? null,
-                'efectivoLiquidez'       => $clientRequest['efectivoLiquidez'] ?? null,
-                'activoTotal'            => $clientRequest['activoTotal'] ?? null,
-                'pasivoNoCirculante'     => $clientRequest['pasivoNoCirculante'] ?? null,
-                'provisionesLargoPlazo'  => $clientRequest['provisionesLargoPlazo'] ?? null,
-                'pasivoCirculante'       => $clientRequest['pasivoCirculante'] ?? null,
-                'capitalContable'        => $clientRequest['capitalContable'] ?? null,
-                'prestamosActuales'      => $clientRequest['prestamosActuales'] ?? null,
-
-                // Cualitativo
-                'antiguedadEmpresa'      => $clientRequest['antiguedadEmpresa'] ?? null,
-                'reconocimientoMercado'  => $clientRequest['reconocimientoMercado'] ?? null,
-                'informeComercial'       => $clientRequest['informeComercial'] ?? null,
-                'infraestructura'        => $clientRequest['infraestructura'] ?? null,
-                'problemasLegales'       => $clientRequest['problemasLegales'] ?? null,
-                'calidadCartera'         => $clientRequest['calidadCartera'] ?? null,
-                'referenciasBancarias'   => $clientRequest['referenciasBancarias'] ?? null,
-                'referenciasComerciales' => $clientRequest['referenciasComerciales'] ?? null,
-                'importanciaMop'         => $clientRequest['importanciaMop'] ?? null,
-                'perteneceHolding'       => $clientRequest['perteneceHolding'] ?? null,
-                'idAnalisis'             => $clientRequest['idAnalisis'] ?? null,
-            ]);
-
-            if( isset($clientStoreRequest['attachment_id']) ){
-                $client->profile->profileImage()->create([
-                    'attachment_id' => $clientRequest['attachment_id']
-                ]);
-            }
-
             DB::commit();
             return response()->json([
                 'client'=> $client,
-                'quotation' => isset($newQuotation) ? $newQuotation : null
             ], 200);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
@@ -121,21 +80,102 @@ class ClientController extends Controller
         }
     }
 
-    // agricultura_y_Ganaderia: "Agricultura y Ganaderia",
-    // industria_extractiva: "Industria Extractiva",
-    // industria_manufacturera: "Industria Manufacturera",
-    // energia: "Energia",
-    // aguas_y_saneamiento: "Aguas y Saneamiento",
-    // construccion: "Construccion",
-    // comercial: "Comercial",
-    // transporte: "Transporte",
-    // hoteleria: "Hoteleria",
-    // comunicacion: "Comunicación",
-    // finanzas y seguros: "Finanzas y Seguros",
-    // actividades_inmobiliarias: "Actividades Inmobiliarias",
-    // actividades_profesionales: "Actividades Profesionales",
-    // otros_servicios: "Otros Servicios",
-    // otras_actividades: "Otras Actividades",
+    public function update( UpdateClientRequest $request, $clientId ) {
+
+        DB::beginTransaction();
+        try {
+            $clientRequest = $request->validated();
+
+            $client = Client::find($clientId);
+
+            if( !$client ){
+                return response()->json([
+                    'message' => 'No se pudo crear el cliente.',
+                    'errors' => [
+                        'client' => 'No se encontró el cliente.'
+                    ]
+                ], 400);
+            }
+
+            /** @var \App\Models\User $authUser **/
+            $authUser = Auth::user();
+            if(!$authUser){
+                return response()->json([
+                    'message' => 'No se encontró el usuario autenticado.',
+                    'errors' => [
+                        'auth' => 'No se encontró el usuario autenticado.'
+                    ]
+                ], 400);
+            }
+
+            $authUserId = $authUser->id;
+
+            if( $client->user_id != $authUserId ){
+                return response()->json([
+                    'message' => 'No se encontró el usuario autenticado.',
+                    'errors' => [
+                        'auth' => 'No se encontró el usuario autenticado.'
+                    ]
+                ], 400);
+            }
+
+            $client->update([
+                'name'                   => $clientRequest['name'] ?? $client->name,
+                'score'                  => $clientRequest['score'] ?? $client->score,
+                'rfc'                    => isset($clientRequest['rfc']) ? Str::upper($clientRequest['rfc']) : $client->rfc,
+                'anioConstitucion'       => $clientRequest['anioConstitucion'] ?? $client->anioConstitucion,
+                'sector_actividad'       => $clientRequest['sector_actividad'] ?? $client->sector_actividad,
+                'ventas'                 => $clientRequest['ventas'] ?? $client->ventas,
+                'ventasAnterior'         => $clientRequest['ventasAnterior'] ?? $client->ventasAnterior,
+                'trabActivo'             => $clientRequest['trabActivo'] ?? $client->trabActivo,
+                'otrosIng'               => $clientRequest['otrosIng'] ?? $client->otrosIng,
+                'resExplotacion'         => $clientRequest['resExplotacion'] ?? $client->resExplotacion,
+                'resFinanciero'          => $clientRequest['resFinanciero'] ?? $client->resFinanciero,
+                'resAntesImp'            => $clientRequest['resAntesImp'] ?? $client->resAntesImp,
+                'deudoresComerciales'    => $clientRequest['deudoresComerciales'] ?? $client->deudoresComerciales,
+                'inversionesFin'         => $clientRequest['inversionesFin'] ?? $client->inversionesFin,
+                'efectivoLiquidez'       => $clientRequest['efectivoLiquidez'] ?? $client->efectivoLiquidez,
+                'activoTotal'            => $clientRequest['activoTotal'] ?? $client->activoTotal,
+                'pasivoNoCirculante'     => $clientRequest['pasivoNoCirculante'] ?? $client->pasivoNoCirculante,
+                'provisionesLargoPlazo'  => $clientRequest['provisionesLargoPlazo'] ?? $client->provisionesLargoPlazo,
+                'pasivoCirculante'       => $clientRequest['pasivoCirculante'] ?? $client->pasivoCirculante,
+                'capitalContable'        => $clientRequest['capitalContable'] ?? $client->capitalContable,
+                'prestamosActuales'      => $clientRequest['prestamosActuales'] ?? $client->prestamosActuales,
+                'antiguedadEmpresa'      => $clientRequest['antiguedadEmpresa'] ?? $client->antiguedadEmpresa,
+                'reconocimientoMercado'  => $clientRequest['reconocimientoMercado'] ?? $client->reconocimientoMercado,
+                'informeComercial'       => $clientRequest['informeComercial'] ?? $client->informeComercial,
+                'infraestructura'        => $clientRequest['infraestructura'] ?? $client->infraestructura,
+                'problemasLegales'       => $clientRequest['problemasLegales'] ?? $client->problemasLegales,
+                'calidadCartera'         => $clientRequest['calidadCartera'] ?? $client->calidadCartera,
+                'referenciasBancarias'   => $clientRequest['referenciasBancarias'] ?? $client->referenciasBancarias,
+                'referenciasComerciales' => $clientRequest['referenciasComerciales'] ?? $client->referenciasComerciales,
+                'importanciaMop'         => $clientRequest['importanciaMop'] ?? $client->importanciaMop,
+                'perteneceHolding'       => $clientRequest['perteneceHolding'] ?? $client->perteneceHolding,
+                'idAnalisis'             => $clientRequest['idAnalisis'] ?? $client->idAnalisis,
+            ]);
+
+            $client->save();
+
+
+
+            DB::commit();
+            return response()->json([
+                'client'=> $client,
+                'quotation' => isset($newQuotation) ? $newQuotation : null
+            ], 200);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Ocurrió un error al crear el cliente.',
+                'errors' => [
+                    'client' => 'Ocurrió un error al crear el cliente.'
+                ],
+                'exception' => $th->getMessage()
+            ], 500);
+        }
+    }
+
 
     /**
      * Función para obtener todos los clientes asociados al usuario autenticado.
@@ -171,18 +211,13 @@ class ClientController extends Controller
             ], 200);
         }
 
+        /** @var \Illuminate\Database\Eloquent\Builder $q **/
         $searchQuery = function ($q) use ($searchTerm) {
-            $q->where('name', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhere('email', 'LIKE', '%' . $searchTerm . '%');
+            $q->where('name', 'LIKE', '%' . $searchTerm . '%');
         };
 
-        $profileQuery = function ($q) use ($searchTerm) {
-            $q->where(DB::raw("CONCAT(last_name, ' ', middle_name)"), 'LIKE', '%' . $searchTerm . '%')
-                ->orWhere(DB::raw("CONCAT(middle_name, ' ', last_name)"), 'LIKE', '%' . $searchTerm . '%');
-        };
 
-        $clientQuery = $clientQuery->where($searchQuery)
-            ->orWhereHas('profile', $profileQuery);
+        $clientQuery = $clientQuery->where($searchQuery);
 
         $clients = $clientQuery->skip($offset)->take($limit)->get();
         $total = $clientQuery->count();
