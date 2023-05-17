@@ -11,7 +11,7 @@ class StoreClientRequest extends FormRequest
         'name'                  => ['string'],
         'score'                 => ['numeric'],
         'rfc'                   => ['string'],
-        'anioConstitucion'      => ['string'],
+        'anioConstitucion'      => ['numeric'],
         'sector_actividad'      => ['string'],
         'ventas'                => ['numeric'],
         'ventasAnterior'        => ['numeric'],

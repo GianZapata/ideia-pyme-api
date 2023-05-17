@@ -32,7 +32,7 @@ class Client extends Model
         "ACTIVIDADES_INMOBILIARIAS"  => "Servicio",
         "ACTIVIDADES_PROFESIONALES"  => "Servicio",
         "OTROS_SERVICIOS"            => "Servicio",
-        "OTRAS_ACTIVIDADES"          => "Comercial"
+        "OTRAS_ACTIVIDADES"          => "Otras"
     ];
 
     protected array $guard_name = ['api', 'web'];

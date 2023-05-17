@@ -24,7 +24,12 @@ class Handler extends ExceptionHandler
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
-            //
+            return response()->json([
+                'message' => 'Error interno del servidor',
+                'errors' => [
+                    'server' => 'Error interno del servidor',
+                ],
+            ], 500);
         });
         $this->renderable(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
             return response()->json([
