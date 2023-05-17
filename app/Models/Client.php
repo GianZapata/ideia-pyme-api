@@ -14,13 +14,34 @@ use App\Services\FinancialHealthService;
 
 class Client extends Model
 {
+
     use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
+
+    private $sectorActividadTypes = [
+        "AGRICULTURA_Y_GANADERIA"    => "Industrial",
+        "INDUSTRIA_EXTRACTIVA"       => "Industrial",
+        "INDUSTRIA_MANUFACTURERA"    => "Industrial",
+        "ENERGIA"                    => "Industrial",
+        "AGUAS_Y_SANEAMIENTO"        => "Industrial",
+        "CONSTRUCCION"               => "Industrial",
+        "COMERCIAL"                  => "Comercial",
+        "TRANSPORTE"                 => "Servicio",
+        "HOTELERIA"                  => "Hotelería",
+        "COMUNICACIÓN"               => "Comunicación",
+        "FINANZAS_Y_SEGUROS"         => "Servicio",
+        "ACTIVIDADES_INMOBILIARIAS"  => "Servicio",
+        "ACTIVIDADES_PROFESIONALES"  => "Servicio",
+        "OTROS_SERVICIOS"            => "Servicio",
+        "OTRAS_ACTIVIDADES"          => "Comercial"
+    ];
 
     protected array $guard_name = ['api', 'web'];
 
     protected $appends = [
         'salud_financiera',
-        'score_cualitativo'
+        'score_cualitativo',
+        'score_completo',
+        'sector_actividad_name'
     ];
 
     protected $fillable = [
@@ -87,4 +108,17 @@ class Client extends Model
             get: fn () => $financialHealthService->calculateQualitativeScore($this)
         );
     }
+
+    public function scoreCompleto(): Attribute {
+        return new Attribute(
+            get: fn () => $this->score_cualitativo + $this->salud_financiera['scoreCuantitativo'] ?? 0
+        );
+    }
+
+    public function sectorActividadName(): Attribute {
+        return new Attribute(
+            get: fn () => $this->sector_actividad ? $this->sectorActividadTypes[$this->sector_actividad] : null
+        );
+    }
+
 }

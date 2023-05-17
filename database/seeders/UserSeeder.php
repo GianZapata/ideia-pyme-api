@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Attachment;
+use App\Models\Client;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\UserProfile;
@@ -59,6 +60,9 @@ class UserSeeder extends Seeder
                 $userProfile->profileImage()->save($userProfileImage);
                 $user->assignRole($adminRole);
 
+                Client::factory(50)->create([
+                    'user_id' => $user->id,
+                ]);
 
             });
         }

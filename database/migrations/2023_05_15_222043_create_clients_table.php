@@ -23,26 +23,26 @@ return new class extends Migration
             $table->string("sector_actividad"); // Sector actividad:
 
             /** Cuenta de resultados */
-            $table->float("ventas"); // Ventas
-            $table->float("ventasAnterior"); // Ventas Año anterior:
-            $table->float("trabActivo"); // Trabajos realizados para el activo
-            $table->float("otrosIng"); // Otros ingresos de explotación
-            $table->float("resExplotacion"); // Resultado de explotación
-            $table->float("resFinanciero"); // Resultado financiero
-            $table->float("resAntesImp"); // Resultado antes de impuestos
+            $table->float("ventas", 12); // Ventas
+            $table->float("ventasAnterior", 12); // Ventas Año anterior:
+            $table->float("trabActivo", 12); // Trabajos realizados para el activo
+            $table->float("otrosIng", 12); // Otros ingresos de explotación
+            $table->float("resExplotacion", 12); // Resultado de explotación
+            $table->float("resFinanciero", 12); // Resultado financiero
+            $table->float("resAntesImp", 12); // Resultado antes de impuestos
 
             /** Activo */
-            $table->float("deudoresComerciales"); // Deudores comerciales
-            $table->float("inversionesFin"); // Inversiones financieras corto plazo
-            $table->float("efectivoLiquidez"); // Efectivo o liquidez
-            $table->float("activoTotal"); // Activo Total
+            $table->float("deudoresComerciales", 12); // Deudores comerciales
+            $table->float("inversionesFin", 12); // Inversiones financieras corto plazo
+            $table->float("efectivoLiquidez", 12); // Efectivo o liquidez
+            $table->float("activoTotal", 12); // Activo Total
 
             /** Pasivo */
-            $table->float("pasivoNoCirculante"); // Pasivo no circulante
-            $table->float("provisionesLargoPlazo"); // Provisiones a largo plazo
-            $table->float("pasivoCirculante"); // Pasivo circulante
-            $table->float("capitalContable"); // Capital contable
-            $table->float("prestamosActuales"); // Prestamos Actuales
+            $table->float("pasivoNoCirculante", 12); // Pasivo no circulante
+            $table->float("provisionesLargoPlazo", 12); // Provisiones a largo plazo
+            $table->float("pasivoCirculante", 12); // Pasivo circulante
+            $table->float("capitalContable", 12); // Capital contable
+            $table->float("prestamosActuales", 12); // Prestamos Actuales
 
             /** Cuantitativo */
             $table->integer("antiguedadEmpresa")->nullable();
