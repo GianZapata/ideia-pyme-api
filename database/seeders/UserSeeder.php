@@ -60,9 +60,9 @@ class UserSeeder extends Seeder
                 $userProfile->profileImage()->save($userProfileImage);
                 $user->assignRole($adminRole);
 
-                Client::factory(50)->create([
+                $user->clients()->saveMany(Client::factory(50)->create([
                     'user_id' => $user->id,
-                ]);
+                ]));
 
             });
         }

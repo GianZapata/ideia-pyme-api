@@ -6,6 +6,44 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateClientRequest extends FormRequest
 {
+
+    private $rules = [
+        'name'                  => ['string'],
+        'rfc'                   => ['string'],
+        'score'                 => ['numeric'],
+        'sector_actividad'      => ['string'],
+        'anioConstitucion'      => ['numeric'],
+        'ventas'                => ['numeric'],
+        'ventasAnterior'        => ['numeric'],
+        'trabActivo'            => ['numeric'],
+        'otrosIng'              => ['numeric'],
+        'resExplotacion'        => ['numeric'],
+        'resFinanciero'         => ['numeric'],
+        'resAntesImp'           => ['numeric'],
+        'deudoresComerciales'   => ['numeric'],
+        'inversionesFin'        => ['numeric'],
+        'efectivoLiquidez'      => ['numeric'],
+        'activoTotal'           => ['numeric'],
+        'pasivoNoCirculante'    => ['numeric'],
+        'provisionesLargoPlazo' => ['numeric'],
+        'pasivoCirculante'      => ['numeric'],
+        'capitalContable'       => ['numeric'],
+        'prestamosActuales'     => ['numeric'],
+        'antiguedadEmpresa'      => ['numeric'],
+        'reconocimientoMercado'  => ['numeric'],
+        'informeComercial'       => ['numeric'],
+        'infraestructura'        => ['numeric'],
+        'problemasLegales'       => ['numeric'],
+        'calidadCartera'         => ['numeric'],
+        'referenciasBancarias'   => ['numeric'],
+        'referenciasComerciales' => ['numeric'],
+        'importanciaMop'         => ['numeric'],
+        'perteneceHolding'       => ['numeric'],
+        'idAnalisis'             => ['numeric'],
+    ];
+
+    protected $messages = [];
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -21,39 +59,11 @@ class UpdateClientRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name'                  => ['string'],
-            'sector_actividad'      => ['string'],
-            'anioConstitucion'      => ['numeric'],
-            'ventas'                => ['numeric'],
-            'ventasAnterior'        => ['numeric'],
-            'trabActivo'            => ['numeric'],
-            'otrosIng'              => ['numeric'],
-            'resExplotacion'        => ['numeric'],
-            'resFinanciero'         => ['numeric'],
-            'resAntesImp'           => ['numeric'],
-            'deudoresComerciales'   => ['numeric'],
-            'inversionesFin'        => ['numeric'],
-            'efectivoLiquidez'      => ['numeric'],
-            'activoTotal'           => ['numeric'],
-            'pasivoNoCirculante'    => ['numeric'],
-            'provisionesLargoPlazo' => ['numeric'],
-            'pasivoCirculante'      => ['numeric'],
-            'capitalContable'       => ['numeric'],
-            'prestamosActuales'     => ['numeric'],
+        return $this->rules;
+    }
 
-
-            'antiguedadEmpresa'      => ['numeric'],
-            'reconocimientoMercado'  => ['numeric'],
-            'informeComercial'       => ['numeric'],
-            'infraestructura'        => ['numeric'],
-            'problemasLegales'       => ['numeric'],
-            'calidadCartera'         => ['numeric'],
-            'referenciasBancarias'   => ['numeric'],
-            'referenciasComerciales' => ['numeric'],
-            'importanciaMop'         => ['numeric'],
-            'perteneceHolding'       => ['numeric'],
-            'idAnalisis'             => ['numeric'],
-        ];
+    public function messages()
+    {
+        return $this->messages;
     }
 }

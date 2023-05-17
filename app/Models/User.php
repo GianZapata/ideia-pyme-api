@@ -136,4 +136,11 @@ class User extends Authenticatable
         return $this->hasMany(EmailVerification::class);
     }
 
+    // Relation with clients
+
+    public function clients()
+    {
+        return $this->hasMany(Client::class);
+    }
+
 }

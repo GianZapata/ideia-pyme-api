@@ -34,34 +34,35 @@ class ClientController extends Controller
 
             $client = Client::create([
                 'user_id'               => $authUserId,
-                'name'                  => $clientRequest['name'] ?? null,
+                'name'                  => $clientRequest['name'],
                 'score'                 => $clientRequest['score'] ?? null,
                 'rfc'                   => isset($clientRequest['rfc']) ? Str::upper($clientRequest['rfc']) : null,
-                'anioConstitucion'      => $clientRequest['anioConstitucion'] ?? null,
-                'sector_actividad'      => $clientRequest['sector_actividad'] ?? null,
-                'ventas'                => $clientRequest['ventas'] ?? null,
-                'ventasAnterior'        => $clientRequest['ventasAnterior'] ?? null,
-                'trabActivo'            => $clientRequest['trabActivo'] ?? null,
-                'otrosIng'              => $clientRequest['otrosIng'] ?? null,
-                'resExplotacion'        => $clientRequest['resExplotacion'] ?? null,
-                'resFinanciero'         => $clientRequest['resFinanciero'] ?? null,
-                'resAntesImp'           => $clientRequest['resAntesImp'] ?? null,
-                'deudoresComerciales'   => $clientRequest['deudoresComerciales'] ?? null,
-                'inversionesFin'        => $clientRequest['inversionesFin'] ?? null,
-                'efectivoLiquidez'      => $clientRequest['efectivoLiquidez'] ?? null,
-                'activoTotal'           => $clientRequest['activoTotal'] ?? null,
-                'pasivoNoCirculante'    => $clientRequest['pasivoNoCirculante'] ?? null,
-                'provisionesLargoPlazo' => $clientRequest['provisionesLargoPlazo'] ?? null,
-                'pasivoCirculante'      => $clientRequest['pasivoCirculante'] ?? null,
-                'capitalContable'       => $clientRequest['capitalContable'] ?? null,
-                'prestamosActuales'     => $clientRequest['prestamosActuales'] ?? null,
+                'anioConstitucion'      => $clientRequest['anioConstitucion'],
+                'sector_actividad'      => $clientRequest['sector_actividad'],
+                'ventas'                => $clientRequest['ventas'],
+                'ventasAnterior'        => $clientRequest['ventasAnterior'],
+                'trabActivo'            => $clientRequest['trabActivo'],
+                'otrosIng'              => $clientRequest['otrosIng'],
+                'resExplotacion'        => $clientRequest['resExplotacion'],
+                'resFinanciero'         => $clientRequest['resFinanciero'],
+                'resAntesImp'           => $clientRequest['resAntesImp'],
+                'deudoresComerciales'   => $clientRequest['deudoresComerciales'],
+                'inversionesFin'        => $clientRequest['inversionesFin'],
+                'efectivoLiquidez'      => $clientRequest['efectivoLiquidez'],
+                'activoTotal'           => $clientRequest['activoTotal'],
+                'pasivoNoCirculante'    => $clientRequest['pasivoNoCirculante'],
+                'provisionesLargoPlazo' => $clientRequest['provisionesLargoPlazo'],
+                'pasivoCirculante'      => $clientRequest['pasivoCirculante'],
+                'capitalContable'       => $clientRequest['capitalContable'],
+                'prestamosActuales'     => $clientRequest['prestamosActuales'],
             ]);
 
             if( !$client ){
-                $errors['client'] = 'No se pudo crear el cliente.';
                 return response()->json([
                     'message' => 'No se pudo crear el cliente.',
-                    'errors' => $errors
+                    'errors' => [
+                        'client' => 'No se pudo crear el cliente.'
+                    ]
                 ], 400);
             }
 
@@ -198,7 +199,8 @@ class ClientController extends Controller
             ], 400);
         }
 
-        $clientQuery = Client::with('user');
+        $clientQuery = Client::where('user_id', $authUser->id)
+            ->with('user');
 
         if( empty( $searchTerm )) {
 
@@ -251,12 +253,14 @@ class ClientController extends Controller
         }
 
         $client = Client::where('id', $clientId)
+            ->where('user_id', $authUser->id)
             ->with('user')
             ->first();
 
         if(!$client){
             return response()->json([
-                'message' => 'Client not found'
+                'message' => 'Client not found',
+                'errors' => []
             ], 404);
         }
 
