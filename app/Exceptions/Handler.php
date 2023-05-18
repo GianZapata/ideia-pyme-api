@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -38,6 +39,14 @@ class Handler extends ExceptionHandler
                     'permission' => 'No tienes permisos para realizar esta acción',
                 ],
             ], 403);
+        });
+        $this->renderable(function (\Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException $e, $request) {
+            return response()->json([
+                'message' => 'Método no permitido',
+                'errors' => [
+                    'method' => 'Método no permitido',
+                ],
+            ], 405);
         });
     }
 }
