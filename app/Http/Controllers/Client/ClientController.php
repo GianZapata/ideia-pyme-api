@@ -142,18 +142,23 @@ class ClientController extends Controller
                 'pasivoCirculante'       => $clientRequest['pasivoCirculante'] ?? $client->pasivoCirculante,
                 'capitalContable'        => $clientRequest['capitalContable'] ?? $client->capitalContable,
                 'prestamosActuales'      => $clientRequest['prestamosActuales'] ?? $client->prestamosActuales,
-                'antiguedadEmpresa'      => $clientRequest['antiguedadEmpresa'] ?? $client->antiguedadEmpresa,
-                'reconocimientoMercado'  => $clientRequest['reconocimientoMercado'] ?? $client->reconocimientoMercado,
-                'informeComercial'       => $clientRequest['informeComercial'] ?? $client->informeComercial,
-                'infraestructura'        => $clientRequest['infraestructura'] ?? $client->infraestructura,
-                'problemasLegales'       => $clientRequest['problemasLegales'] ?? $client->problemasLegales,
-                'calidadCartera'         => $clientRequest['calidadCartera'] ?? $client->calidadCartera,
-                'referenciasBancarias'   => $clientRequest['referenciasBancarias'] ?? $client->referenciasBancarias,
-                'referenciasComerciales' => $clientRequest['referenciasComerciales'] ?? $client->referenciasComerciales,
-                'importanciaMop'         => $clientRequest['importanciaMop'] ?? $client->importanciaMop,
-                'perteneceHolding'       => $clientRequest['perteneceHolding'] ?? $client->perteneceHolding,
-                'idAnalisis'             => $clientRequest['idAnalisis'] ?? $client->idAnalisis,
             ]);
+
+            if( $client->idAnalisis === null ) {
+                $client->update([
+                    'antiguedadEmpresa'      => $clientRequest['antiguedadEmpresa'] ?? null,
+                    'reconocimientoMercado'  => $clientRequest['reconocimientoMercado'] ?? null,
+                    'informeComercial'       => $clientRequest['informeComercial'] ?? null,
+                    'infraestructura'        => $clientRequest['infraestructura'] ?? null,
+                    'problemasLegales'       => $clientRequest['problemasLegales'] ?? null,
+                    'calidadCartera'         => $clientRequest['calidadCartera'] ?? null,
+                    'referenciasBancarias'   => $clientRequest['referenciasBancarias'] ?? null,
+                    'referenciasComerciales' => $clientRequest['referenciasComerciales'] ?? null,
+                    'importanciaMop'         => $clientRequest['importanciaMop'] ?? null,
+                    'perteneceHolding'       => $clientRequest['perteneceHolding'] ?? null,
+                    'idAnalisis'             => $clientRequest['idAnalisis'] ?? null,
+                ]);
+            }
 
             $client->save();
 

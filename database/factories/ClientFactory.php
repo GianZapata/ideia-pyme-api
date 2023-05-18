@@ -38,8 +38,6 @@ class ClientFactory extends Factory
      */
     public function definition(): array
     {
-
-
         return [
             'name'                   => $this->faker->company(),
             'score'                  => $this->faker->randomFloat(2, 300, 850),
@@ -63,17 +61,17 @@ class ClientFactory extends Factory
             'capitalContable'        => $this->faker->numberBetween(0, 50000000),
             'prestamosActuales'      => $this->faker->numberBetween(0, 50000000),
 
-            'antiguedadEmpresa'      => $this->faker->numberBetween(0, 100),
-            'reconocimientoMercado'  => $this->faker->numberBetween(0, 5),
-            'informeComercial'       => $this->faker->numberBetween(0, 5),
-            'infraestructura'        => $this->faker->numberBetween(0, 5),
-            'problemasLegales'       => $this->faker->numberBetween(0, 5),
-            'calidadCartera'         => $this->faker->numberBetween(0, 5),
-            'referenciasBancarias'   => $this->faker->numberBetween(0, 5),
-            'referenciasComerciales' => $this->faker->numberBetween(0, 5),
-            'importanciaMop'         => $this->faker->numberBetween(0, 5),
-            'perteneceHolding'       => $this->faker->numberBetween(0, 5),
-            'idAnalisis'             => $this->faker->numberBetween(1, 100),
+            'antiguedadEmpresa'      => $this->faker->numberBetween(1, 5), // 5: 3 a 6 meses, 4: 7 a 12 meses, 3: 1 a 2 años, 2: 3 a 5 años, 1: más de 5 años
+            'reconocimientoMercado'  => $this->faker->numberBetween(1, 5), // 5: 3 a 6 meses, 4: 7 a 12 meses, 3: 1 a 2 años, 2: 3 a 5 años, 1: más de 5 años
+            'informeComercial'       => $this->faker->numberBetween(1, 2),
+            'infraestructura'        => $this->faker->randomElement([1, 5]),
+            'problemasLegales'       => $this->faker->randomElement([1, 5]),
+            'calidadCartera'         => $this->faker->numberBetween(1, 5),
+            'referenciasBancarias'   => $this->faker->randomElement([1, 5]),
+            'referenciasComerciales' => $this->faker->randomElement([1, 5]),
+            'importanciaMop'         => $this->faker->randomElement([1, 5]),
+            'perteneceHolding'       => $this->faker->randomElement([1, 5]),
+            'idAnalisis'             => $this->faker->numberBetween(1, 100), // Use Id Client
         ];
     }
 }
