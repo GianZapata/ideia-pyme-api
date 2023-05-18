@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6e323dfbaff17ad236ba7384d4f4dba7",
+    "content-hash": "ccc0a44ec2d63f383db1178192124d0d",
     "packages": [
         {
             "name": "brick/math",
@@ -2253,6 +2253,58 @@
                 }
             ],
             "time": "2023-02-08T01:06:31+00:00"
+        },
+        {
+            "name": "phpcfdi/rfc",
+            "version": "v1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpcfdi/rfc.git",
+                "reference": "2c81277d375fe4cd8799eeca13be85102a980c6b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpcfdi/rfc/zipball/2c81277d375fe4cd8799eeca13be85102a980c6b",
+                "reference": "2c81277d375fe4cd8799eeca13be85102a980c6b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": ">=7.3"
+            },
+            "require-dev": {
+                "fakerphp/faker": "^1.13",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpCfdi\\Rfc\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Carlos C Soto",
+                    "email": "eclipxe13@gmail.com",
+                    "homepage": "https://eclipxe.com.mx/"
+                }
+            ],
+            "description": "PHP library to deal with Mexican RFC",
+            "homepage": "https://github.com/phpcfdi/rfc",
+            "keywords": [
+                "mexico",
+                "sat"
+            ],
+            "support": {
+                "issues": "https://github.com/phpcfdi/rfc/issues",
+                "source": "https://github.com/phpcfdi/rfc"
+            },
+            "time": "2022-04-29T04:37:36+00:00"
         },
         {
             "name": "phpoption/phpoption",

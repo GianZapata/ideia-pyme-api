@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Faker\Generator as FakerGenerator;
+use PhpCfdi\Rfc\RfcFaker;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,7 +14,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->extend(FakerGenerator::class, function($generator) {
+            $generator->addProvider(new RfcFaker());
+            return $generator;
+        });
     }
 
     /**

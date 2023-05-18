@@ -38,11 +38,12 @@ class ClientFactory extends Factory
      */
     public function definition(): array
     {
+
+
         return [
             'name'                   => $this->faker->company(),
             'score'                  => $this->faker->randomFloat(2, 300, 850),
-            'rfc'                    => $this->faker->regexify('[A-Z]{4}[0-9]{6}[A-Z0-9]{3}'),
-
+            'rfc'                    => $this->faker->mexicanRfcFisica(),
             'anioConstitucion'       => $this->faker->year,
             'sector_actividad'       => $this->faker->randomElement(self::$sectorActividad),
             'ventas'                 => $this->faker->numberBetween(100000000, 150000000),
