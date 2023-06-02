@@ -28,6 +28,7 @@ class Attachment extends Model
         'group',
     ];
 
+    protected $hidden = ['hash', 'disk', 'storage_path', 'full_path', 'created_at', 'updated_at'];
     protected $appends = [
         'url',
         'relative_url',
@@ -86,4 +87,12 @@ class Attachment extends Model
         return "{$this->name}.{$this->extension}";
     }
 
+    public function uploadFile($file, $path = null, $disk = 'public')
+    {
+        $path = $path ?? $this->path;
+        $name = $this->name;
+        $extension = $this->extension;
+
+        $file->storeAs($path, "{$name}.{$extension}", $disk);
+    }
 }

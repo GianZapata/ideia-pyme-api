@@ -80,20 +80,6 @@ class Client extends Model
         'idAnalisis',
     ];
 
-    /**
-     * Obtiene el usuario asociado con el cliente.
-     *
-     * La función `belongsTo` establece una relación de "uno a muchos" inversa
-     * entre el modelo `Client` y el modelo `User`. En este caso, cada cliente
-     * pertenece a un usuario, lo que significa que hay una clave foránea
-     * `user_id` en la tabla `clients` que hace referencia al campo `id` en la
-     * tabla `users`.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function user(){
-        return $this->belongsTo(User::class, 'user_id');
-    }
 
     public function saludFinanciera(): Attribute {
         $financialHealthService = new FinancialHealthService();
@@ -108,7 +94,6 @@ class Client extends Model
             get: fn () => $financialHealthService->calculateQualitativeScore($this)
         );
     }
-
     public function scoreCompleto(): Attribute {
         return new Attribute(
             get: fn () => $this->score_cualitativo + $this->salud_financiera['scoreCuantitativo'] ?? 0
@@ -119,6 +104,21 @@ class Client extends Model
         return new Attribute(
             get: fn () => $this->sector_actividad ? $this->sectorActividadTypes[$this->sector_actividad] : null
         );
+    }
+
+    /**
+     * Obtiene el usuario asociado con el cliente.
+     *
+     * La función `belongsTo` establece una relación de "uno a muchos" inversa
+     * entre el modelo `Client` y el modelo `User`. En este caso, cada cliente
+     * pertenece a un usuario, lo que significa que hay una clave foránea
+     * `user_id` en la tabla `clients` que hace referencia al campo `id` en la
+     * tabla `users`.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id');
     }
 
 }

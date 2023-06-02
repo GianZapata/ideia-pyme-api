@@ -191,7 +191,8 @@ class ClientController extends Controller
      */
     public function getAll( Request $request ) {
         $limit = $request->get('limit', 25);
-        $offset = $request->get('offset', 0);
+        $page = $request->get('page', 1);
+
         $searchTerm = $request->get('searchTerm', null);
 
         /** @var \App\Models\User $authUser **/
@@ -208,30 +209,15 @@ class ClientController extends Controller
             ->with('user');
 
         if( empty( $searchTerm )) {
-
-            $clients = $clientQuery->skip($offset)->take($limit)->get();
-            $total = $clientQuery->count();
-
-            return response()->json([
-                'clients' => $clients,
-                'total' => $total,
-            ], 200);
+            $clients = $clientQuery->paginate($limit, ['*'], 'page', $page);
+        } else {
+            $clientQuery = $clientQuery->where('name', 'LIKE', '%' . $searchTerm . '%');
+            $clients = $clientQuery->paginate($limit, ['*'], 'page', $page);
         }
 
-        /** @var \Illuminate\Database\Eloquent\Builder $q **/
-        $searchQuery = function ($q) use ($searchTerm) {
-            $q->where('name', 'LIKE', '%' . $searchTerm . '%');
-        };
-
-
-        $clientQuery = $clientQuery->where($searchQuery);
-
-        $clients = $clientQuery->skip($offset)->take($limit)->get();
-        $total = $clientQuery->count();
-
         return response()->json([
-            'clients' => $clients,
-            'total' => $total,
+            'clients' => $clients->items(),
+            'total' => $clients->total(),
         ], 200);
     }
 

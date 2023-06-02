@@ -2,9 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Subscription;
 use Illuminate\Support\ServiceProvider;
 use Faker\Generator as FakerGenerator;
 use PhpCfdi\Rfc\RfcFaker;
+use App\Models\User;
+use Laravel\Cashier\Cashier;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +28,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Cashier::useCustomerModel(User::class);
+        Cashier::calculateTaxes();
+        Cashier::useSubscriptionModel(Subscription::class);
     }
 }

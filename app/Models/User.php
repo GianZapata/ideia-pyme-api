@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Laravel\Cashier\Billable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes, Billable;
 
     /**
      * The attributes that are mass assignable.
@@ -42,6 +43,7 @@ class User extends Authenticatable
         'verification_token',
         'roles',
         'deleted_at',
+        'email_verified_at',
     ];
 
     /**
@@ -58,7 +60,8 @@ class User extends Authenticatable
         'profile_image_url',
         'full_name',
         'permission_names',
-        'role_names'
+        'role_names',
+        'is_verified',
     ];
 
     /**
@@ -68,6 +71,7 @@ class User extends Authenticatable
         * @param string $lastName
         * @return string
     */
+
     public function generateUsername($name, $lastName)
     {
         $username = Str::slug($name . ' ' . $lastName, '.');
