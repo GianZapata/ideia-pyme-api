@@ -16,11 +16,11 @@ return new class extends Migration
             $table->foreignId('factura_id')->constrained()->onDelete('cascade');
             $table->string('version')->nullable();
             $table->string('rfc_prov_certif')->nullable();
-            $table->string('uuid')->nullable();
+            $table->string('uuid')->nullable()->index();
             $table->dateTime('fecha_timbrado')->nullable();
-            $table->string('sello_cfd')->nullable();
-            $table->string('no_certificado_sat')->nullable();
-            $table->string('sello_sat')->nullable();
+            $table->text('sello_cfd')->nullable();
+            $table->text('no_certificado_sat')->nullable();
+            $table->text('sello_sat')->nullable();
             $table->timestamps();
         });
     }

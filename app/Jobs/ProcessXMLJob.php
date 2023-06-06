@@ -25,10 +25,15 @@ class ProcessXMLJob implements ShouldQueue
         //
     }
 
+    public function handle(){
+
+    }
+
+
     /**
      * Execute the job.
      */
-    public function handle()
+    public function handleToJson()
     {
         ini_set('memory_limit', '256M');
         $directory = "public/xml";

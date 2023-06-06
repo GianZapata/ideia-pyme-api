@@ -37,10 +37,6 @@ class Comprobante extends Model
         return $this->belongsTo(Factura::class);
     }
 
-    public function impuestos()
-    {
-        return $this->morphMany(Impuesto::class, 'impuestoable');
-    }
 
     public function conceptos()
     {

@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Comprobante;
+use App\Models\Emisor;
+use App\Models\Receptor;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,7 +17,8 @@ class Factura extends Model
         'receptor_id',
         'uuid',
         'year',
-        'month'
+        'month',
+        'tipo'
     ];
 
     public function emisor()
