@@ -30,7 +30,7 @@ class ProcessXMLJob implements ShouldQueue
      */
     public function handle()
     {
-        $directory = "public/xml/KFM131016RJ1/";
+        $directory = "public/xml/ACS210207S95";
         $data  = [];
         $allKeys = [];
         $someKeys = [];
@@ -50,9 +50,11 @@ class ProcessXMLJob implements ShouldQueue
             'cfdiComprobante' => '/cfdi:Comprobante',
             'cfdiEmisor' => '/cfdi:Comprobante/cfdi:Emisor',
             'cfdiReceptor' => '/cfdi:Comprobante/cfdi:Receptor',
-            'cfdiConceptos' => '/cfdi:Comprobante/cfdi:Conceptos/*',
             'cfdiComplemento' => '/cfdi:Comprobante/cfdi:Complemento/*',
         ];
+
+        // 'cfdiConceptos' => '/cfdi:Comprobante/cfdi:Conceptos/*',
+        // 'cfdiConcepto' => '/cfdi:Comprobante/cfdi:Concepto/*',
 
         // Obtén una lista de todos los archivos en el directorio y sus subdirectorios.
         $files = collect(Storage::allFiles($directory));
@@ -96,9 +98,6 @@ class ProcessXMLJob implements ShouldQueue
                     $month = $fecha->format('m');
                 }
 
-
-                Log::info("{$rfc} - {$type} - {$year} - {$month} - {$file}");
-                // Nodos que se van a extraer
                 foreach ($enabledNodes as $nodeName => $nodePath) {
                     $xmlNode = $xml->xpath($nodePath);
 
@@ -112,6 +111,37 @@ class ProcessXMLJob implements ShouldQueue
                         }
 
                         $data[$rfc][$type][$year][$month][$nodeName] = $newAttributes;
+                    }
+                }
+
+                $cfdiConceptos = $xml->xpath('/cfdi:Comprobante/cfdi:Conceptos/*');
+
+                if( $cfdiConceptos) {
+                    foreach ($cfdiConceptos as $concepto => $value) {
+                        $attributes = $value->attributes();
+                        $newAttributes = [];
+
+                        foreach ($attributes as $key => $value) {
+                            if(in_array($key, $disabledKeys)) $value = '**********';
+                            $newAttributes[$key] = (string) $value;
+                        }
+
+                        $data[$rfc][$type][$year][$month]['cfdiConceptos'][$concepto] = $newAttributes;
+                    }
+                }
+
+                $cfdiImp = $xml->xpath('/cfdi:Comprobante/cfdi:Impuestos/cfdi:Traslados/*');
+                if( $cfdiImp ) {
+                    foreach ($cfdiImp as $imp => $value) {
+                        $attributes = $value->attributes();
+                        $newAttributes = [];
+
+                        foreach ($attributes as $key => $value) {
+                            if(in_array($key, $disabledKeys)) $value = '**********';
+                            $newAttributes[$key] = (string) $value;
+                        }
+
+                        $data[$rfc][$type][$year][$month]['cfdiImpuestos']['cfdiTraslados'][$imp] = $newAttributes;
                     }
                 }
             }
