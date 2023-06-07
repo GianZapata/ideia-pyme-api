@@ -95,8 +95,17 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 Route::group(['prefix' => 'reports'], function (){
 
     // Situacion laboral empresa
+    Route::prefix('situacion-laboral-empresa')->group(function () {
+        // Distribución de Nómina a Accionistas y/o Representante Legal
+        Route::get('/distribucion-nomina-accionistas-representante-legal',[SituacionLaboralEmpresaController::class, 'getDistribucionNominaAccionistasRepresentanteLegal'])
+            ->name('reports.distribucionNominaAccionistasRepresentanteLegal');
+    });
 
     Route::get('/situacion-laboral-empresa',[SituacionLaboralEmpresaController::class, 'getSituacionLaboralEmpresa'])
         ->name('reports.situacionLaboralEmpresa');
+
+    // Detalle fiscal de facturación emitida y recibida
+    Route::get('/detalle-fiscal-facturacion-emitida-recibida',[SituacionLaboralEmpresaController::class, 'getDetalleFiscalFacturacionEmitidaRecibida'])
+        ->name('reports.detalleFiscalFacturacionEmitidaRecibida');
 
 });
