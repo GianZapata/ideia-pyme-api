@@ -105,10 +105,6 @@ class ProcessXMLJob implements ShouldQueue
 
         $fecha = isset($attributesComprobante['Fecha']) ? Carbon::parse($attributesComprobante['Fecha']) : null;
 
-        $year = $fecha->format('Y');
-        $month = $fecha->format('m');
-
-
         $facturaFind = Factura::where('uuid', $uuid)->first();
 
         if($facturaFind) return;
@@ -131,8 +127,7 @@ class ProcessXMLJob implements ShouldQueue
 
         $factura = Factura::create([
             'uuid'          => $uuid,
-            'year'          => $year,
-            'month'         => $month,
+            'fecha'         => $fecha,
             'tipo'          => $type, // 'emitido' o 'recibido
             'emisor_id'     => $emisor->id,
             'receptor_id'   => $receptor->id

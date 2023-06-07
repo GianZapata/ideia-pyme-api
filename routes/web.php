@@ -445,7 +445,7 @@ Route::get('/', function () {
 
 Route::get('/test', function (){
 
-    $directory = "public/xml/KFM131016RJ1/emitidos/2021/";
+    $directory = "public/xml";
 
     // Obtén una lista de todos los archivos en el directorio y sus subdirectorios.
     $files = collect(Storage::allFiles($directory));

@@ -17,8 +17,7 @@ return new class extends Migration
             $table->foreignId('receptor_id')->nullable()->constrained('receptores')->onDelete('cascade');
             $table->uuid('uuid')->unique();
             $table->string('tipo'); // emitido o recibido
-            $table->integer('year');
-            $table->integer('month');
+            $table->date('fecha');
             $table->timestamps();
         });
     }

@@ -5,9 +5,12 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationEmailController;
 use App\Http\Controllers\Client\ClientController;
+use App\Http\Controllers\Reports\SituacionLaboralEmpresaController;
 use App\Http\Controllers\User\UserController;
+use App\Models\Comprobante;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -86,4 +89,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             ->name('clients.update');
 
     });
+});
+
+
+Route::group(['prefix' => 'reports'], function (){
+
+    // Situacion laboral empresa
+
+    Route::get('/situacion-laboral-empresa',[SituacionLaboralEmpresaController::class, 'getSituacionLaboralEmpresa'])
+        ->name('reports.situacionLaboralEmpresa');
+
 });

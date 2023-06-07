@@ -16,8 +16,7 @@ class Factura extends Model
         'emisor_id',
         'receptor_id',
         'uuid',
-        'year',
-        'month',
+        'fecha',
         'tipo'
     ];
 
