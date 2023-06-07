@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('no_identificacion')->nullable();
             $table->integer('cantidad')->nullable();
             $table->string('unidad')->nullable();
-            $table->string('descripcion')->nullable();
+            $table->text('descripcion')->nullable();
             $table->decimal('valor_unitario', 10, 2)->nullable();
             $table->decimal('importe', 10, 2)->nullable();
             $table->timestamps();

@@ -22,8 +22,4 @@ class Concepto extends Model
         'importe',
     ];
 
-    public function impuestos()
-    {
-        return $this->morphMany(Impuesto::class, 'impuestable');
-    }
 }
