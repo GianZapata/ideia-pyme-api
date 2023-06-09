@@ -9,6 +9,7 @@ use App\Http\Controllers\Reports\Empresa\SituacionLaboral\ComportamientoHistoric
 use App\Http\Controllers\Reports\Empresa\SituacionLaboral\DistribucionNominaController;
 use App\Http\Controllers\Reports\SituacionJuridicaController;
 use App\Http\Controllers\Reports\SituacionLaboralEmpresaController;
+use App\Http\Controllers\Reports\ClientsController;
 
 use App\Http\Controllers\User\UserController;
 use App\Models\Comprobante;
@@ -114,6 +115,11 @@ Route::group(['prefix' => 'reports'], function (){
             Route::get('/distribucion-nomina', [DistribucionNominaController::class, 'getDistribucionNomina'])
                 ->name('reports.empresa.situacionLaboral.getDistribucionNomina');
         });
+    });
+
+    Route::prefix('clientes')->group( function(){
+        Route::get('/top5clientes', [ClientsController::class, 'obtenerTop5Clientes'])
+        ->name('reports.clientes.top5Clientes');
     });
 
     Route::prefix('facturacion')->group( function () {
