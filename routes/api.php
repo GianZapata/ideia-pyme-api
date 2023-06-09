@@ -5,7 +5,10 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationEmailController;
 use App\Http\Controllers\Client\ClientController;
+
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\SatReport\SatReportController;
+use App\Http\Controllers\SatReport\SatReportCredentialsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -54,7 +57,7 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 /** api/users */
-Route::group(['prefix' => 'users'], function() {
+Route::group(['prefix' => 'users'], function () {
     Route::post('/check-email', [UserController::class, 'checkEmail'])->name('users.checkEmail');
 });
 
@@ -67,8 +70,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     })->name('auth.check');
 
     /** api/profile */
-    Route::get('/profile', function( Request $request ){
-        return response()->json(['user' => $request->user() ], 200);
+    Route::get('/profile', function (Request $request) {
+        return response()->json(['user' => $request->user()], 200);
     })->name('profile');
 
     /** api/clients */
@@ -84,6 +87,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
         Route::put('/{id}', [ClientController::class, 'update'])
             ->name('clients.update');
-
     });
+});
+
+Route::group(['prefix' => 'sat-reports'], function () {
+    Route::get('/', [SatReportController::class, 'index'])
+        ->name('sat-reports.index');
+    Route::post('/new', [SatReportController::class, 'store'])
+        ->name('sat-reports.store');
+    Route::post('/credentials', [SatReportCredentialsController::class, 'store'])
+        ->name('sat-reports.storeCredentials');
 });
