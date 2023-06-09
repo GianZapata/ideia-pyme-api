@@ -13,22 +13,22 @@ class Comprobante extends Model
 
     protected $fillable = [
         'certificado',
+        'condiciones_de_pago',
+        'exportacion',
         'fecha',
+        'folio',
+        'forma_pago',
         'lugar_expedicion',
+        'metodo_pago',
         'moneda',
         'no_certificado',
         'sello',
+        'serie',
         'sub_total',
+        'tipo_cambio',
         'tipo_comprobante',
         'total',
         'version',
-        'folio',
-        'forma_pago',
-        'metodo_pago',
-        'serie',
-        'tipo_cambio',
-        'exportacion',
-        'condiciones_de_pago',
         'factura_id',
     ];
 
@@ -37,10 +37,6 @@ class Comprobante extends Model
         return $this->belongsTo(Factura::class);
     }
 
-    public function impuestos()
-    {
-        return $this->morphMany(Impuesto::class, 'impuestoable');
-    }
 
     public function conceptos()
     {

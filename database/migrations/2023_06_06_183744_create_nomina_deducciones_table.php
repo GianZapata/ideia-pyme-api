@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rfcs', function (Blueprint $table) {
+        Schema::create('nomina_deducciones', function (Blueprint $table) {
             $table->id();
-            $table->string('rfc')->unique();
-            $table->softDeletes();
+            $table->float('total_otras_deducciones')->nullable();
+            $table->float('total_impuestos_retenidos')->nullable();
+            $table->foreignId('nomina_id')->nullable()->constrained();
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rfcs');
+        Schema::dropIfExists('nomina_deducciones');
     }
 };

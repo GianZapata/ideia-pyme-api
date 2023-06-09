@@ -17,6 +17,17 @@ class Pago extends Model
         'moneda_p',
         'tipo_cambio_p',
         'monto',
+        'id_documento',
+        'serie',
+        'folio',
+        'moneda_dr',
+        'equivalencia_dr',
+        'num_parcialidad',
+        'imp_saldo_ant',
+        'imp_pagado',
+        'imp_saldo_insoluto',
+        'objeto_imp_dr',
+        'complemento_id'
     ];
 
     public function doctosRelacionados()

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('pagos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('complemento_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('version')->nullable();
             $table->decimal('monto_total_pagos', 10, 2)->nullable();
             $table->dateTime('fecha_pago')->nullable();

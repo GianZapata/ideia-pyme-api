@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('tipo_comprobante')->nullable();
             $table->decimal('total', 10, 2)->nullable();
             $table->float('version')->nullable();
-            $table->integer('folio')->nullable();
+            $table->string('folio')->nullable();
             $table->integer('forma_pago')->nullable();
             $table->string('metodo_pago')->nullable();
             $table->string('serie')->nullable();

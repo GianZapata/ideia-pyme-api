@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('impuestos', function (Blueprint $table) {
+        Schema::create('comprobante_traslados', function (Blueprint $table) {
             $table->id();
-            $table->string('impuestoable_type');
-            $table->integer('impuestoable_id');
+            $table->foreignId('comprobante_id')->constrained()->onDelete('cascade');
+            $table->decimal('base', 10, 2)->nullable();
             $table->string('impuesto')->nullable();
-            $table->string('base')->nullable();
             $table->string('tipo_factor')->nullable();
-            $table->string('tasa_o_cuota')->nullable();
-            $table->string('importe')->nullable();
+            $table->decimal('tasa_o_cuota', 10, 6)->nullable();
+            $table->decimal('importe', 10, 2)->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('impuestos');
+        Schema::dropIfExists('comprobante_traslados');
     }
 };
