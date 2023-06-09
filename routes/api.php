@@ -5,13 +5,18 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationEmailController;
 use App\Http\Controllers\Client\ClientController;
+use App\Http\Controllers\Reports\Empresa\SituacionLaboral\ComportamientoHistoricoNominaController;
+use App\Http\Controllers\Reports\Empresa\SituacionLaboral\DistribucionNominaController;
+use App\Http\Controllers\Reports\SituacionJuridicaController;
 use App\Http\Controllers\Reports\SituacionLaboralEmpresaController;
 use App\Http\Controllers\User\UserController;
 use App\Models\Comprobante;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Carbon\Carbon;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,18 +99,87 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 Route::group(['prefix' => 'reports'], function (){
 
-    // Situacion laboral empresa
-    Route::prefix('situacion-laboral-empresa')->group(function () {
-        // Distribución de Nómina a Accionistas y/o Representante Legal
-        Route::get('/distribucion-nomina-accionistas-representante-legal',[SituacionLaboralEmpresaController::class, 'getDistribucionNominaAccionistasRepresentanteLegal'])
-            ->name('reports.distribucionNominaAccionistasRepresentanteLegal');
-    });
-
     Route::get('/situacion-laboral-empresa',[SituacionLaboralEmpresaController::class, 'getSituacionLaboralEmpresa'])
         ->name('reports.situacionLaboralEmpresa');
 
-    // Detalle fiscal de facturación emitida y recibida
-    Route::get('/detalle-fiscal-facturacion-emitida-recibida',[SituacionLaboralEmpresaController::class, 'getDetalleFiscalFacturacionEmitidaRecibida'])
-        ->name('reports.detalleFiscalFacturacionEmitidaRecibida');
+
+    Route::get('/situacion-juridica',[SituacionJuridicaController::class, 'getSituacionJuridica'])
+        ->name('reports.situacionJuridica');
+
+    Route::prefix('empresa')->group( function (){
+        Route::prefix('situacion-laboral')->group( function (){
+            Route::get('/comportamiento-historico-nomina', [ComportamientoHistoricoNominaController::class, 'getComportamientoHistoricoNomina'])
+                ->name('reports.empresa.situacionLaboral.comportamientoHistoricoNomina');
+
+            Route::get('/distribucion-nomina', [DistribucionNominaController::class, 'getDistribucionNomina'])
+                ->name('reports.empresa.situacionLaboral.getDistribucionNomina');
+        });
+    });
+
+    Route::prefix('facturacion')->group( function () {
+        Route::get('/ingresos-egresos', function ( Request $request ) {
+            $rfc =  $request->rfc;
+
+            if( !$rfc ) {
+                return response()->json(['message' => 'El RFC es requerido'], 400);
+            }
+
+            $comprobantes = Comprobante::query()
+                ->join('facturas', 'comprobantes.factura_id', '=', 'facturas.id')
+                ->join('emisores', 'facturas.emisor_id', '=', 'emisores.id')
+                ->select(
+                    DB::raw('YEAR(comprobantes.fecha) AS year'),
+                    DB::raw('MONTH(comprobantes.fecha) AS month'),
+                    DB::raw('SUM(comprobantes.total) AS total'),
+                    DB::raw('comprobantes.tipo_comprobante AS tipo')
+                )
+                ->whereIn('comprobantes.tipo_comprobante', ['I', 'E'])
+                ->where('emisores.rfc', $rfc)
+                ->groupBy(DB::raw('YEAR(comprobantes.fecha)'), DB::raw('MONTH(comprobantes.fecha)'), 'comprobantes.tipo_comprobante')
+                ->get();
+
+            $groupedData = [];
+
+            foreach ($comprobantes as $comprobante) {
+                $year = $comprobante->year;
+                $month = Carbon::createFromDate($comprobante->year, $comprobante->month, 1)->locale('es_ES')->isoFormat('MMMM');
+                $tipo = $comprobante->tipo;
+
+                if (!isset($groupedData[$year])) {
+                    $groupedData[$year] = [
+                        'year' => $year,
+                        'totalIngresos' => 0,
+                        'totalEgresos' => 0,
+                        'desgloseIngresos' => array_fill(0, 12, ['total' => 0, 'month' => '']),
+                        'desgloseEgresos' => array_fill(0, 12, ['total' => 0, 'month' => ''])
+                    ];
+
+                    // Asignar los nombres de los meses
+                    for ($i = 1; $i <= 12; $i++) {
+                        $monthName = Carbon::createFromDate($year, $i, 1)->locale('es_ES')->isoFormat('MMM');
+                        $groupedData[$year]['desgloseIngresos'][$i - 1]['month'] = $monthName;
+                        $groupedData[$year]['desgloseEgresos'][$i - 1]['month'] = $monthName;
+                    }
+                }
+
+                if ($tipo === 'I') {
+                    $groupedData[$year]['totalIngresos'] += $comprobante->total;
+                    $groupedData[$year]['desgloseIngresos'][$comprobante->month - 1]['total'] = floatval($comprobante->total);
+                } else if ($tipo === 'E') {
+                    $groupedData[$year]['totalEgresos'] += $comprobante->total;
+                    $groupedData[$year]['desgloseEgresos'][$comprobante->month - 1]['total'] = floatval($comprobante->total);
+                }
+            }
+
+            uksort($groupedData, function ($a, $b) {
+                return $b - $a;
+            });
+
+            return response()->json([
+                'periodos' => array_values($groupedData)
+            ], 200);
+        });
+    });
+
 
 });

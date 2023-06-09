@@ -76,7 +76,6 @@ class SituacionLaboralEmpresaController extends Controller {
         ->groupBy('rango_sueldo')
         ->get();
 
-
         $rangoKeys = [
             "Menos de $5000",
             "Entre $5000 y $10000",
@@ -148,7 +147,8 @@ class SituacionLaboralEmpresaController extends Controller {
             ->select(
                 DB::raw('YEAR(comprobantes.fecha) as year'),
                 DB::raw('MONTH(comprobantes.fecha) as month'),
-                DB::raw('GROUP_CONCAT(DISTINCT receptores.id) as ids_empleados')
+                DB::raw('GROUP_CONCAT(DISTINCT receptores.id) as ids_empleados'),
+                DB::raw('SUM(comprobantes.total) as total_nomina') // Agregamos el total de la nómina para cada mes
             )
             ->join('facturas', 'comprobantes.factura_id', '=', 'facturas.id')
             ->join('receptores', 'facturas.receptor_id', '=', 'receptores.id')
@@ -158,26 +158,31 @@ class SituacionLaboralEmpresaController extends Controller {
             ->get()
             ->keyBy(function ($item) {
                 // Usamos year y month para crear una llave única para cada periodo
-                return $item->year . '-' . str_pad($item->month, 2, '0', STR_PAD_LEFT);
+                return $item->year . '-' . str_pad($item->month, 2, '0', STR_PAD_LEFT) . '-01';
             })
             ->map(function ($item) {
                 // Convertimos los ids_empleados en un array
-                return explode(',', $item->ids_empleados);
+                return [
+                    'empleados' => explode(',', $item->ids_empleados),
+                    'nomina' => floatval($item->total_nomina) // Guardamos el total de la nómina
+                ];
             });
 
         $altasYBajas = [];
         $empleadosPrevios = [];
 
-        foreach ($empleadosPorMes as $mes => $empleados) {
-            $altas = array_diff($empleados, $empleadosPrevios);
-            $bajas = array_diff($empleadosPrevios, $empleados);
+        foreach ($empleadosPorMes as $mes => $datos) {
+            $altas = array_diff($datos['empleados'], $empleadosPrevios);
+            $bajas = array_diff($empleadosPrevios, $datos['empleados']);
 
-            $altasYBajas[$mes] = [
+            $altasYBajas[] = [
+                'fecha' => $mes,
                 'altas' => count($altas),
-                'bajas' => count($bajas),
+                'bajas' => count($bajas) * -1,
+                'nomina' => $datos['nomina'], // Agregamos el total de la nómina a los resultados
             ];
 
-            $empleadosPrevios = $empleados;
+            $empleadosPrevios = $datos['empleados'];
         }
 
         return response()->json([

@@ -451,7 +451,7 @@ Route::get('/test', function (){
     $files = collect(Storage::allFiles($directory));
 
     $files->chunk(2500)->each(function ($chunk) {
-        ProcessXMLJob::dispatch($chunk);
+        ProcessXMLJob::dispatch($chunk)->onQueue('xml');
     });
 
 });

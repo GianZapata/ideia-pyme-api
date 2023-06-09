@@ -48,5 +48,23 @@ class Handler extends ExceptionHandler
                 ],
             ], 405);
         });
+
+        $this->renderable(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, $request) {
+            return response()->json([
+                'message' => 'No se encontró el recurso solicitado',
+                'errors' => [
+                    'resource' => 'No se encontró el recurso solicitado',
+                ],
+            ], 404);
+        });
+        $this->renderable(function (\Symfony\Component\Routing\Exception\RouteNotFoundException $e, $request) {
+            return response()->json([
+                'message' => 'No se encontró el recurso solicitado',
+                'errors' => [
+                    'resource' => 'No se encontró el recurso solicitado',
+                ],
+            ], 404);
+        });
+
     }
 }
