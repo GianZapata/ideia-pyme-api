@@ -144,6 +144,20 @@ Route::group(['prefix' => 'reports'], function (){
                 ->groupBy(DB::raw('YEAR(comprobantes.fecha)'), DB::raw('MONTH(comprobantes.fecha)'), 'comprobantes.tipo_comprobante')
                 ->get();
 
+            $facturas = DB::table('comprobantes')
+                ->join('facturas', 'comprobantes.factura_id', '=', 'facturas.id')
+                ->join('emisores', 'facturas.emisor_id', '=', 'emisores.id')
+                ->select(
+                    DB::raw('YEAR(comprobantes.fecha) AS year'),
+                    DB::raw('SUM(CASE WHEN facturas.tipo = "emitidos" THEN comprobantes.total ELSE 0 END) AS totalEmitidos'),
+                    DB::raw('SUM(CASE WHEN facturas.tipo = "recibidos" THEN comprobantes.total ELSE 0 END) AS totalRecibidos')
+                )
+                ->whereIn('facturas.tipo', ['emitidos', 'recibidos'])
+                ->where('emisores.rfc', $rfc)
+                ->groupBy(DB::raw('YEAR(comprobantes.fecha)'))
+                ->get();
+
+
             $groupedData = [];
 
             foreach ($comprobantes as $comprobante) {
@@ -180,6 +194,23 @@ Route::group(['prefix' => 'reports'], function (){
             uksort($groupedData, function ($a, $b) {
                 return $b - $a;
             });
+
+            foreach ($groupedData as &$yearData) {
+                $yearData['totalEmitidos'] = 0;
+                $yearData['totalRecibidos'] = 0;
+            }
+
+            foreach ($facturas as $factura) {
+                $year = $factura->year;
+
+                $totalEmitidos = $factura->totalEmitidos;
+                $totalRecibidos = $factura->totalRecibidos;
+
+                $groupedData[$year]['totalEmitidos'] = floatval($totalEmitidos);
+                $groupedData[$year]['totalRecibidos'] = floatval($totalRecibidos);
+
+            }
+
 
             return response()->json([
                 'periodos' => array_values($groupedData)
