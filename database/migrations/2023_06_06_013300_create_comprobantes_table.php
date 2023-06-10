@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('no_certificado')->nullable();
             $table->text('sello')->nullable();
             $table->decimal('sub_total', 10, 2)->nullable();
+            $table->decimal('descuento', 10, 2)->nullable();
             $table->string('tipo_comprobante')->nullable();
             $table->decimal('total', 10, 2)->nullable();
             $table->float('version')->nullable();
