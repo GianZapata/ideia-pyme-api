@@ -17,7 +17,8 @@ class Factura extends Model
         'receptor_id',
         'uuid',
         'fecha',
-        'tipo'
+        'tipo',
+        'cancelado'
     ];
 
     public function emisor()

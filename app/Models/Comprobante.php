@@ -20,6 +20,7 @@ class Comprobante extends Model
         'forma_pago',
         'lugar_expedicion',
         'metodo_pago',
+        'descuento',
         'moneda',
         'no_certificado',
         'sello',
