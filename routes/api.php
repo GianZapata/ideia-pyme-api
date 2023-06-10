@@ -120,6 +120,8 @@ Route::group(['prefix' => 'reports'], function (){
     Route::prefix('clientes')->group( function(){
         Route::get('/top5clientes', [ClientsController::class, 'obtenerTop5Clientes'])
         ->name('reports.clientes.top5Clientes');
+        Route::get('/diversificacionClientes', [ClientsController::class, 'obtenerDiversificacionClientes'])
+        ->name('reports.clientes.diversificacionClientes');
     });
 
     Route::prefix('facturacion')->group( function () {
