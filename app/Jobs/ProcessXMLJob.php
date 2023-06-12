@@ -143,7 +143,6 @@ class ProcessXMLJob implements ShouldQueue
             'cancelado'     => $cancelado,
         ]);
 
-        Log::info((array) $attributesComprobante);
         /** CFDI Comprobante */
         $comprobante = Comprobante::create([
             'certificado'           => $attributesComprobante->Certificado ?? null,
