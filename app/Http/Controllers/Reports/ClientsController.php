@@ -74,6 +74,7 @@ class ClientsController extends Controller {
         foreach ($query as $cliente) {
             $porcentajeFacturacion = ($cliente->totalFinal / $totalFacturacion) * 100;
             $diversificacionClientes[] = [
+                'sumClients' => "1",
                 'receptor_id' => $cliente->receptor_id,
                 'total_facturas' => $cliente->total_facturas,
                 'rfc' => $cliente->rfc,
