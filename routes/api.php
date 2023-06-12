@@ -10,7 +10,8 @@ use App\Http\Controllers\Reports\Empresa\SituacionLaboral\DistribucionNominaCont
 use App\Http\Controllers\Reports\SituacionJuridicaController;
 use App\Http\Controllers\Reports\SituacionLaboralEmpresaController;
 use App\Http\Controllers\Reports\ClientsController;
-
+use App\Http\Controllers\Reports\Accionistas\SearchAccionistasController;
+use App\Http\Controllers\SatReport\SatReportController;
 use App\Http\Controllers\User\UserController;
 use App\Models\Comprobante;
 use Illuminate\Http\Request;
@@ -120,6 +121,8 @@ Route::group(['prefix' => 'reports'], function (){
     Route::prefix('clientes')->group( function(){
         Route::get('/top5clientes', [ClientsController::class, 'obtenerTop5Clientes'])
         ->name('reports.clientes.top5Clientes');
+        Route::get('/diversificacionClientes', [ClientsController::class, 'obtenerDiversificacionClientes'])
+        ->name('reports.clientes.diversificacionClientes');
     });
 
     Route::prefix('facturacion')->group( function () {
@@ -134,6 +137,10 @@ Route::group(['prefix' => 'reports'], function (){
             ->name('reports.facturacion.ingresosEgresos');
     });
 
+    Route::prefix('/accionistas')->group( function () {
+        Route::post('/verify', [SearchAccionistasController::class, 'verify'])
+            ->name('reports.accionistas.verify');
+    });
 
 });
 
