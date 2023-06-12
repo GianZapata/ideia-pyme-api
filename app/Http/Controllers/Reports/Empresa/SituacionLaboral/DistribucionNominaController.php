@@ -20,8 +20,11 @@ class DistribucionNominaController extends Controller
 
     public function getDistribucionNomina(Request $request)
     {
-        $rfc = "KFM131016RJ1";
-        $nominaColaboradores = $this->nominaService->obtenerNominaColaboradores( $rfc );
+        $rfc =  $request->rfc;
+
+        if( !$rfc ) return response()->json(['message' => 'El RFC es requerido'], 400);
+
+        $nominaColaboradores = $this->nominaService->obtenerNominaAccionistasORepresentantes( $rfc );
         $totalNominaGeneral = $nominaColaboradores->sum('total_nomina');
         $nominaColaboradoresVsTotal = $this->nominaService->calcularNominaColaboradoresVsTotal( $rfc );
 

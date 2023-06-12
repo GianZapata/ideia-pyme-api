@@ -23,8 +23,7 @@ class UserSeeder extends Seeder
         $seedUser = User::where('email', 'gian@gian.com')->first();
 
         if(!$seedUser) {
-            $adminRole = Role::where('name', 'admin')->first();
-
+            $adminRole = Role::firstOrCreate(['name' => 'admin']);
             /** @var \App\Models\User $user **/
             // Crear un usuario y asignarle el rol de administrador
             User::factory()->create([
@@ -59,10 +58,6 @@ class UserSeeder extends Seeder
                 ]);
                 $userProfile->profileImage()->save($userProfileImage);
                 $user->assignRole($adminRole);
-
-                $user->clients()->saveMany(Client::factory(50)->create([
-                    'user_id' => $user->id,
-                ]));
 
             });
         }

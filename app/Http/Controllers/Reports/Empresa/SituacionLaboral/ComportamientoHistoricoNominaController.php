@@ -20,12 +20,16 @@ class ComportamientoHistoricoNominaController extends Controller
 
     public function getComportamientoHistoricoNomina( Request $request ){
 
-        $rangosSueldo = $this->comportamientoHistoricoNominaService->obtenerRangosSueldo();
-        $empleadosPorMes = $this->comportamientoHistoricoNominaService->obtenerEmpleadosPorMes();
+        $rfc =  $request->rfc;
+
+        if (!$rfc) return response()->json(['message' => 'El RFC es requerido'], 400);
+
+        $rangosSueldo = $this->comportamientoHistoricoNominaService->obtenerDistribucionCompletaDeSueldos( $rfc );
+        $empleadosPorMes = $this->comportamientoHistoricoNominaService->obtenerEmpleadosPorMes( $rfc );
         $altasYBajas = $this->comportamientoHistoricoNominaService->calcularAltasYBajas($empleadosPorMes);
-        $empleadosActivos = $this->comportamientoHistoricoNominaService->obtenerEmpleadosActivos();
+        $empleadosActivos = $this->comportamientoHistoricoNominaService->obtenerEmpleadosActivos( $rfc );
         $totalEmpleadosActivos = $empleadosActivos->count();
-        $nominaPromedio = $this->comportamientoHistoricoNominaService->calcularNominaPromedio();
+        $nominaPromedio = $this->comportamientoHistoricoNominaService->calcularNominaPromedio( $rfc );
 
         return response()->json([
             'rangosSueldo' => $rangosSueldo,

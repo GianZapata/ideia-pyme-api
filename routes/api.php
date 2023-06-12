@@ -11,6 +11,10 @@ use App\Http\Controllers\Reports\SituacionJuridicaController;
 use App\Http\Controllers\Reports\SituacionLaboralEmpresaController;
 use App\Http\Controllers\Reports\ClientsController;
 use App\Http\Controllers\Reports\Accionistas\SearchAccionistasController;
+use App\Http\Controllers\Reports\Facturacion\CashFlowFiscal\CashFlowFiscalController;
+use App\Http\Controllers\Reports\Facturacion\ComparativoAnual\EmitidosController;
+use App\Http\Controllers\Reports\Facturacion\ComparativoAnual\IngresosEgresosController;
+use App\Http\Controllers\Reports\Facturacion\ComparativoAnual\RecibidosController;
 use App\Http\Controllers\SatReport\SatReportController;
 use App\Http\Controllers\User\UserController;
 use App\Models\Comprobante;
@@ -135,6 +139,9 @@ Route::group(['prefix' => 'reports'], function (){
 
         Route::get('/ingresos-egresos', [IngresosEgresosController::class, 'getIngresosEgresos'])
             ->name('reports.facturacion.ingresosEgresos');
+
+        Route::get('/cash-flow-fiscal', [CashFlowFiscalController::class, 'getCashFlowFiscal'])
+            ->name('reports.facturacion.cashFlowFiscal');
     });
 
     Route::prefix('/accionistas')->group( function () {
