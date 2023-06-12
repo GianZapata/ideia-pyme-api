@@ -10,6 +10,7 @@ use App\Http\Controllers\Reports\Empresa\SituacionLaboral\DistribucionNominaCont
 use App\Http\Controllers\Reports\SituacionJuridicaController;
 use App\Http\Controllers\Reports\SituacionLaboralEmpresaController;
 use App\Http\Controllers\Reports\ClientsController;
+use App\Http\Controllers\Reports\SuppliersController;
 use App\Http\Controllers\Reports\Accionistas\SearchAccionistasController;
 use App\Http\Controllers\SatReport\SatReportController;
 use App\Http\Controllers\User\UserController;
@@ -123,6 +124,11 @@ Route::group(['prefix' => 'reports'], function (){
         ->name('reports.clientes.top5Clientes');
         Route::get('/diversificacionClientes', [ClientsController::class, 'obtenerDiversificacionClientes'])
         ->name('reports.clientes.diversificacionClientes');
+    });
+
+    Route::prefix('proveedores')->group( function() {
+        Route::get('/top5proveedores', [SuppliersController::class, 'obtenerTop5Proveedores'])
+        ->name('reports.proveedores.top5proveedores');
     });
 
     Route::prefix('facturacion')->group( function () {
