@@ -53,11 +53,17 @@ El servidor de desarrollo se ejecutará en `http://localhost:8000`.
 
 ## Uso
 
+En el .env modificar la variable `QUEUE_CONNECTION` a `database` para que los trabajos se manejen correctamente.
+```
+QUEUE_CONNECTION=database
+```
+
 Para procesar los archivos XML, se ha creado un comando personalizado que puede ser ejecutado desde la línea de comandos. El comando divide los archivos en chunks de 2500 y envía cada chunk como un trabajo a una cola llamada 'xml'.
 
 Para ejecutar el comando, abre una terminal en el directorio del proyecto y ejecuta:
-
-
+```
+php artisan process:xml-files
+```
 
 El comando buscará los archivos XML en el directorio `public/xml` y los procesará en segundo plano.
 
