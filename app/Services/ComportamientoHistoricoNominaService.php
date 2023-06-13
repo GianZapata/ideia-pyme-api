@@ -144,7 +144,11 @@ class ComportamientoHistoricoNominaService
         $totalNominaUltimos2Meses = $nominaQuery->sum('comprobantes.total');
         $totalEmpleadosUltimos2Meses = $nominaQuery->distinct('receptores.id')->count();
 
-        $nominaPromedio = $totalNominaUltimos2Meses / $totalEmpleadosUltimos2Meses;
+        $nominaPromedio = null;
+
+        if ($totalEmpleadosUltimos2Meses !== 0) {
+            $nominaPromedio = $totalNominaUltimos2Meses / $totalEmpleadosUltimos2Meses;
+        }
 
         return $nominaPromedio;
     }
