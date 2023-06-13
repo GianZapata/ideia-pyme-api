@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class ClientsController extends Controller {
 
-    public function obtenerTop5Clientes() {
+    public function obtenerTop5Clientes( $rfc ) {
 
         $top5Clientes = Emisor::select(
             'facturas.receptor_id',
@@ -30,7 +30,7 @@ class ClientsController extends Controller {
         ->leftJoin('facturas', 'emisores.id', '=', 'facturas.emisor_id')
         ->leftJoin('comprobantes', 'facturas.id', '=', 'comprobantes.factura_id')
         ->leftJoin('receptores', 'facturas.receptor_id', '=', 'receptores.id')
-        ->where('emisores.rfc', 'ACO091214PD0')
+        ->where('emisores.rfc', $rfc)
         ->groupBy('facturas.receptor_id', 'receptores.nombre')
         ->orderBy('total_facturas', 'DESC')
         ->limit(5)
@@ -41,10 +41,10 @@ class ClientsController extends Controller {
         ]);
     }
 
-    public function obtenerDiversificacionClientes() {
+    public function obtenerDiversificacionClientes( $rfc ) {
         $totalFacturacion = Emisor::leftJoin('facturas', 'emisores.id', '=', 'facturas.emisor_id')
             ->leftJoin('comprobantes', 'facturas.id', '=', 'comprobantes.factura_id')
-            ->where('emisores.rfc', 'ACO091214PD0')
+            ->where('emisores.rfc', $rfc)
             ->sum(DB::raw('comprobantes.total * IF(comprobantes.tipo_cambio = "0.00" OR comprobantes.tipo_cambio = "1.00", 1, comprobantes.tipo_cambio)'));
 
         $query = Emisor::select(
@@ -62,7 +62,7 @@ class ClientsController extends Controller {
             ->leftJoin('facturas', 'emisores.id', '=', 'facturas.emisor_id')
             ->leftJoin('comprobantes', 'facturas.id', '=', 'comprobantes.factura_id')
             ->leftJoin('receptores', 'facturas.receptor_id', '=', 'receptores.id')
-            ->where('emisores.rfc', 'ACO091214PD0')
+            ->where('emisores.rfc', $rfc)
             ->groupBy('facturas.receptor_id', 'receptores.nombre')
             ->orderBy('total_facturas', 'DESC')
             ->get();
