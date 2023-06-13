@@ -8,34 +8,30 @@ use Illuminate\Support\Facades\Log;
 class DistribucionNominaService
 {
 
-    public function obtenerNominaColaboradores( $rfc = null )
+    public function obtenerNominaAccionistasORepresentantes( $rfc )
     {
         $twelveMonthsAgo = now()->subMonths(12);
 
         $query = Comprobante::query()
             ->select(
-                'receptores.nombre',
+                'emisores.nombre',
                 DB::raw('SUM(comprobantes.total) as total_nomina'),
                 DB::raw('YEAR(comprobantes.fecha) as year'),
                 DB::raw('MONTH(comprobantes.fecha) as month')
             )
             ->join('facturas', 'comprobantes.factura_id', '=', 'facturas.id')
             ->join('emisores', 'facturas.emisor_id', '=', 'emisores.id')
-            ->join('receptores', 'facturas.receptor_id', '=', 'receptores.id')
             ->where('comprobantes.tipo_comprobante', 'N')
+            ->where('emisores.rfc', $rfc)
             ->whereBetween('comprobantes.fecha', [$twelveMonthsAgo, now()])
-            ->groupBy('receptores.nombre', 'year', 'month');
+            ->groupBy('emisores.nombre', 'year', 'month');
 
-        if ($rfc) {
-            $query->where('emisores.rfc', $rfc);
-        }
         return $query->get();
-
     }
 
-    public function calcularNominaColaboradoresVsTotal( $rfc = null )
+    public function calcularNominaColaboradoresVsTotal( $rfc )
     {
-        $nominaColaboradores = $this->obtenerNominaColaboradores( $rfc );
+        $nominaColaboradores = $this->obtenerNominaAccionistasORepresentantes( $rfc );
         $totalNominaGeneral = $nominaColaboradores->sum('total_nomina');
 
         return $nominaColaboradores->groupBy('nombre')->map(function ($rows, $nombre) use ($totalNominaGeneral) {

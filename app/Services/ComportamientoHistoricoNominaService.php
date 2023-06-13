@@ -7,41 +7,79 @@ use Illuminate\Support\Facades\Log;
 
 class ComportamientoHistoricoNominaService
 {
-    public function obtenerRangosSueldo() {
+    public function obtenerRangosSueldo( $rfc ) {
         $rangosSueldo = Comprobante::query()
             ->select(
-                DB::raw('CASE
-                            WHEN total <= 5000 THEN "Menos de $5000"
-                            WHEN total > 5000 AND total <= 10000 THEN "Entre $50000 y $10000"
-                            WHEN total > 10000 AND total <= 20000 THEN "Entre $10000 y $20000"
-                            WHEN total > 20000 AND total <= 50000 THEN "Entre $20000 y $50000"
-                            WHEN total > 50000 AND total <= 80000 THEN "Entre $50000 y $80000"
-                            ELSE "Más de $80000"
-                        END AS rango_sueldo'),
-                DB::raw('COUNT(DISTINCT receptores.id) as empleados'),
+                'emisores.rfc as rfc_emisor',
+                'comprobantes.total as total'
             )
             ->join('facturas', 'comprobantes.factura_id', '=', 'facturas.id')
-            ->join('receptores', 'facturas.receptor_id', '=', 'receptores.id')
+            ->join('emisores', 'facturas.emisor_id', '=', 'emisores.id')
             ->where('comprobantes.tipo_comprobante', 'N')
-            ->where('comprobantes.fecha', '>', now()->subMonths(2)) // últimos 2 meses
-            ->groupBy('rango_sueldo')
+            ->where('emisores.rfc', $rfc)
+            ->where('comprobantes.fecha', '>', now()->subMonths(2))
             ->get();
+
         return $rangosSueldo;
     }
 
-    public function obtenerEmpleadosPorMes()
+    public function obtenerDistribucionCompletaDeSueldos( $rfc ){
+
+        $rangosSueldo = $this->obtenerRangosSueldo( $rfc );
+
+        $rangos = [
+            "Menos de $5000"        => 0,
+            "Entre $5000 y $10000"  => 0,
+            "Entre $10000 y $20000" => 0,
+            "Entre $20000 y $50000" => 0,
+            "Entre $50000 y $80000" => 0,
+            "Más de $80000"         => 0
+        ];
+
+        foreach ($rangosSueldo as $resultado) {
+            $total = $resultado->total;
+
+            if ($total <= 5000) {
+                $rangos["Menos de $5000"]++;
+            } elseif ($total > 5000 && $total <= 10000) {
+                $rangos["Entre $5000 y $10000"]++;
+            } elseif ($total > 10000 && $total <= 20000) {
+                $rangos["Entre $10000 y $20000"]++;
+            } elseif ($total > 20000 && $total <= 50000) {
+                $rangos["Entre $20000 y $50000"]++;
+            } elseif ($total > 50000 && $total <= 80000) {
+                $rangos["Entre $50000 y $80000"]++;
+            } else {
+                $rangos["Más de $80000"]++;
+            }
+        }
+
+        $output = [];
+        foreach ($rangos as $rango => $empleados) {
+            $output[] = (object)[
+                'rango_sueldo' => $rango,
+                'empleados' => $empleados
+            ];
+        }
+
+        return $output;
+    }
+
+    public function obtenerEmpleadosPorMes( $rfc  )
     {
         $empleadosPorMes = Comprobante::query()
             ->select(
                 DB::raw('YEAR(comprobantes.fecha) as year'),
                 DB::raw('MONTH(comprobantes.fecha) as month'),
                 DB::raw('GROUP_CONCAT(DISTINCT receptores.id) as ids_empleados'),
-                DB::raw('SUM(comprobantes.total) as total_nomina') // Agregamos el total de la nómina para cada mes
+                DB::raw('SUM(comprobantes.total) as total_nomina')
             )
             ->join('facturas', 'comprobantes.factura_id', '=', 'facturas.id')
+            ->join('emisores', 'facturas.emisor_id', '=', 'emisores.id')
             ->join('receptores', 'facturas.receptor_id', '=', 'receptores.id')
             ->where('comprobantes.tipo_comprobante', 'N')
-            ->where('comprobantes.fecha', '>', now()->subYears(3)) // Solo los ultimos 3 años
+            ->where('comprobantes.fecha', '>', now()->subYears(3))
+            ->where('emisores.rfc', $rfc)
             ->groupBy('year', 'month')
             ->get()
             ->keyBy(function ($item) {
@@ -50,7 +88,7 @@ class ComportamientoHistoricoNominaService
             ->map(function ($item) {
                 return [
                     'empleados' => explode(',', $item->ids_empleados),
-                    'nomina' => floatval($item->total_nomina) // Guardamos el total de la nómina
+                    'nomina' => floatval($item->total_nomina)
                 ];
             });
         return $empleadosPorMes;
@@ -78,36 +116,39 @@ class ComportamientoHistoricoNominaService
         return $altasYBajas;
     }
 
-    public function obtenerEmpleadosActivos()
+    public function obtenerEmpleadosActivos( $rfc )
     {
         $empleadosActivos = Comprobante::query()
             ->select('receptores.id', 'receptores.rfc')
             ->join('facturas', 'comprobantes.factura_id', '=', 'facturas.id')
+            ->join('emisores', 'facturas.emisor_id', '=', 'emisores.id')
             ->join('receptores', 'facturas.receptor_id', '=', 'receptores.id')
             ->where('comprobantes.tipo_comprobante', 'N')
-            ->where('comprobantes.fecha', '>', now()->subMonths(2)) // últimos 2 meses
+            ->where('comprobantes.fecha', '>', now()->subMonths(2))
+            ->where('emisores.rfc', $rfc)
             ->distinct()
             ->get();
-
         return $empleadosActivos;
     }
 
-    public function calcularNominaPromedio()
+    public function calcularNominaPromedio( $rfc )
     {
-        $totalNominaUltimos2Meses = Comprobante::query()
-            ->where('comprobantes.tipo_comprobante', 'N')
-            ->where('comprobantes.fecha', '>', now()->subMonths(2)) // últimos 2 meses
-            ->sum('comprobantes.total');
-
-        $totalEmpleadosUltimos2Meses = Comprobante::query()
+        $nominaQuery = Comprobante::query()
             ->join('facturas', 'comprobantes.factura_id', '=', 'facturas.id')
+            ->join('emisores', 'facturas.emisor_id', '=', 'emisores.id')
             ->join('receptores', 'facturas.receptor_id', '=', 'receptores.id')
             ->where('comprobantes.tipo_comprobante', 'N')
-            ->where('comprobantes.fecha', '>', now()->subMonths(2)) // últimos 2 meses
-            ->distinct('receptores.id')
-            ->count();
+            ->where('comprobantes.fecha', '>', now()->subMonths(2))
+            ->where('emisores.rfc', $rfc);
 
-        $nominaPromedio = $totalNominaUltimos2Meses / $totalEmpleadosUltimos2Meses;
+        $totalNominaUltimos2Meses = $nominaQuery->sum('comprobantes.total');
+        $totalEmpleadosUltimos2Meses = $nominaQuery->distinct('receptores.id')->count();
+
+        $nominaPromedio = null;
+
+        if ($totalEmpleadosUltimos2Meses !== 0) {
+            $nominaPromedio = $totalNominaUltimos2Meses / $totalEmpleadosUltimos2Meses;
+        }
 
         return $nominaPromedio;
     }

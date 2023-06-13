@@ -13,24 +13,13 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
+
         $userRoleName = 'user';
         $adminRoleName = 'admin';
         $clientRoleName = 'client';
 
-        $userRole = Role::where('name', $userRoleName)->first();
-        if (!$userRole) {
-            Role::create(['name' => $userRoleName]);
-        }
-
-        $adminRole = Role::where('name', $adminRoleName)->first();
-        if (!$adminRole) {
-            Role::create(['name' => $adminRoleName]);
-        }
-
-        $clientRole = Role::where('name', $clientRoleName)->first();
-        if (!$clientRole) {
-            Role::create(['name' => $clientRoleName]);
-        }
-
+        Role::firstOrCreate(['name' => $userRoleName]);
+        Role::firstOrCreate(['name' => $adminRoleName]);
+        Role::firstOrCreate(['name' => $clientRoleName]);
     }
 }
