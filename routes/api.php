@@ -17,6 +17,7 @@ use App\Http\Controllers\Reports\Facturacion\ComparativoAnual\EmitidosController
 use App\Http\Controllers\Reports\Facturacion\ComparativoAnual\IngresosEgresosController;
 use App\Http\Controllers\Reports\Facturacion\ComparativoAnual\RecibidosController;
 use App\Http\Controllers\SatReport\SatReportController;
+use App\Http\Controllers\SatReport\SatReportCredentialsController;
 use App\Http\Controllers\User\UserController;
 use App\Models\Comprobante;
 use Illuminate\Http\Request;

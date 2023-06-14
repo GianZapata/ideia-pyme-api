@@ -205,7 +205,7 @@ class ClientController extends Controller
             ], 400);
         }
 
-        $clientQuery = Client::where('user_id', $authUser->id)
+        $clientQuery = Client::where('user_id', $authUser->id)->with('report')
             ->with('user');
 
         if( empty( $searchTerm )) {
@@ -245,7 +245,7 @@ class ClientController extends Controller
 
         $client = Client::where('id', $clientId)
             ->where('user_id', $authUser->id)
-            ->with('user')
+            ->with('user','report')
             ->first();
 
         if(!$client){

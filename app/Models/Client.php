@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\SatReport;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -41,7 +42,9 @@ class Client extends Model
         'salud_financiera',
         'score_cualitativo',
         'score_completo',
-        'sector_actividad_name'
+        'sector_actividad_name',
+        'has_reports',
+        'can_check_report',
     ];
 
     protected $fillable = [
@@ -80,6 +83,11 @@ class Client extends Model
         'idAnalisis',
     ];
 
+    public function hasReports(): Attribute {
+        return new Attribute(
+            get: fn () => $this->reports()->count() > 0
+        );
+    }
 
     public function saludFinanciera(): Attribute {
         $financialHealthService = new FinancialHealthService();
@@ -119,6 +127,20 @@ class Client extends Model
      */
     public function user(){
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function reports(){
+        return $this->hasMany(SatReport::class, 'client_id');
+    }
+
+    public function report(){
+        return $this->hasOne(SatReport::class, 'client_id');
+    }
+
+    public function canCheckReport(): Attribute {
+        return new Attribute(
+            get: fn () => $this->report && $this->report->total_tasks === intval($this->report->total_tasks_completed)
+        );
     }
 
 }

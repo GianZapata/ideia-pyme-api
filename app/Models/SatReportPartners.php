@@ -12,6 +12,7 @@ class SatReportPartners extends Model
     protected $fillable = [
         'sat_report_id',
         'rfc',
+        'curp',
         'name',
         'last_name',
         'second_last_name',

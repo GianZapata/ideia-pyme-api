@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('sat_report_id')->constrained()->cascadeOnDelete();
             $table->string('rfc');
+            $table->string('curp');
             $table->string('name');
             $table->string('last_name');
             $table->string('second_last_name');
