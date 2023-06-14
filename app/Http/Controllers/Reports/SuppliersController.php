@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class SuppliersController extends Controller {
 
-    public function obtenerTop5Proveedores() {
+    public function obtenerTop5Proveedores( $rfc ) {
 
         $top5Proveedores = Receptor::select(
                 'facturas.emisor_id',
@@ -31,7 +31,7 @@ class SuppliersController extends Controller {
             ->leftJoin('facturas', 'receptores.id', '=', 'facturas.receptor_id')
             ->leftJoin('comprobantes', 'facturas.id', '=', 'comprobantes.factura_id')
             ->leftJoin('emisores', 'facturas.emisor_id', '=', 'emisores.id')
-            ->where('receptores.rfc', 'ACO091214PD0')
+            ->where('receptores.rfc', $rfc)
             ->groupBy('facturas.emisor_id', 'emisores.nombre','toRFC')
             ->orderBy('total_facturas', 'DESC')
             ->limit(5)
@@ -43,11 +43,11 @@ class SuppliersController extends Controller {
         ]);
     }
 
-    public function obtenerDiversificacionProveedores() {
+    public function obtenerDiversificacionProveedores( $rfc ) {
         $totalFacturacion = Emisor::leftJoin('facturas', 'emisores.id', '=', 'facturas.emisor_id')
             ->leftJoin('comprobantes', 'facturas.id', '=', 'comprobantes.factura_id')
             ->leftJoin('receptores', 'facturas.receptor_id', '=', 'receptores.id')
-            ->where('receptores.rfc', 'ACO091214PD0')
+            ->where('receptores.rfc', $rfc)
             ->sum(DB::raw('comprobantes.total * IF(comprobantes.tipo_cambio = "0.00" OR comprobantes.tipo_cambio = "1.00", 1, comprobantes.tipo_cambio)'));
 
 
@@ -67,7 +67,7 @@ class SuppliersController extends Controller {
             ->leftJoin('facturas', 'receptores.id', '=', 'facturas.receptor_id')
             ->leftJoin('comprobantes', 'facturas.id', '=', 'comprobantes.factura_id')
             ->leftJoin('emisores', 'facturas.emisor_id', '=', 'emisores.id')
-            ->where('receptores.rfc', 'ACO091214PD0')
+            ->where('receptores.rfc', $rfc)
             ->groupBy('facturas.emisor_id', 'emisores.nombre','toRFC')
             ->orderBy('total_facturas', 'DESC')
             ->get();
