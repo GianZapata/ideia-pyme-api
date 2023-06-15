@@ -211,7 +211,8 @@ class ClientController extends Controller
         if( empty( $searchTerm )) {
             $clients = $clientQuery->paginate($limit, ['*'], 'page', $page);
         } else {
-            $clientQuery = $clientQuery->where('name', 'LIKE', '%' . $searchTerm . '%');
+            $clientQuery = $clientQuery->where('name', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('rfc', 'LIKE', '%' . $searchTerm . '%');
             $clients = $clientQuery->paginate($limit, ['*'], 'page', $page);
         }
 
