@@ -20,6 +20,7 @@ use App\Http\Controllers\SatReport\SatReportController;
 use App\Http\Controllers\SatReport\SatReportCredentialsController;
 use App\Http\Controllers\User\UserController;
 use App\Models\Comprobante;
+use App\Models\SatReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -106,6 +107,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 
 Route::group(['prefix' => 'reports'], function (){
+
+    Route::get('/{reportId}/pymes/{pymeId}', function ($reportId, $pymeId) {
+        $report = SatReport::where('id', $reportId)
+            ->where('client_id', $pymeId)
+            ->first();
+        return response()->json(['report' => $report], 200);
+    })->name('reports.exists');
 
     Route::get('/situacion-laboral-empresa',[SituacionLaboralEmpresaController::class, 'getSituacionLaboralEmpresa'])
         ->name('reports.situacionLaboralEmpresa');
