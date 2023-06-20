@@ -103,8 +103,10 @@ class Client extends Model
         );
     }
     public function scoreCompleto(): Attribute {
+        $saludFinanciera = $this->salud_financiera;
+        $scoreCuantitativo = $saludFinanciera ? $saludFinanciera['scoreCuantitativo'] : 0;
         return new Attribute(
-            get: fn () => $this->score_cualitativo + $this->salud_financiera['scoreCuantitativo'] ?? 0
+            get: fn () => $this->score_cualitativo + $scoreCuantitativo
         );
     }
 

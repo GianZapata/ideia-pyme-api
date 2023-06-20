@@ -181,4 +181,8 @@ Route::group(['prefix' => 'sat-reports'], function () {
         ->name('sat-reports.store');
     Route::post('/credentials', [SatReportCredentialsController::class, 'store'])
         ->name('sat-reports.storeCredentials');
+
+    Route::post('/new-pyme-with-credentials', [SatReportController::class, 'storePymeWithCredentials'])
+        ->name('sat-reports.storePymeWithCredentials');
+
 });

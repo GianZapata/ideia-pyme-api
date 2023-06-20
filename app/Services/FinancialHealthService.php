@@ -162,6 +162,22 @@ class FinancialHealthService
         $pasivoCirculante = $client->pasivoCirculante;
         $prestamosActuales = $client->prestamosActuales ?? 600;
 
+        if(
+            !$ventas  ||
+            !$ventasAnioAnterior  ||
+            !$resultadoDeExplotacion  ||
+            !$resultadoFinanciero  ||
+            !$resultadoAntesImpuestos  ||
+            !$deudoresComerciales  ||
+            !$inversionesFinancierasCortoPlazo  ||
+            !$efectivoLiquidez  ||
+            !$activoTotal  ||
+            !$pasivoNoCirculante  ||
+            !$provisionesLargoPlazo  ||
+            !$pasivoCirculante  ||
+            !$prestamosActuales
+        ) return [];
+
         $inventario = 0;
 
         $capitalTrabajo = (

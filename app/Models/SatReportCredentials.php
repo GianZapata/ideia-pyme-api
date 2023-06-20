@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\SatReport;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,4 +18,14 @@ class SatReportCredentials extends Model
         'cer_attachment_id',
         'key_attachment_id',
     ];
+
+    protected $hidden = [
+        'password',
+    ];
+
+
+    public function satReport() {
+        return $this->belongsTo(SatReport::class);
+    }
+
 }
