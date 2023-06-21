@@ -16,17 +16,6 @@ class SatReport extends Model
         'total_tasks_completed',
         'with_partners',
         'credentials_type',
-
-        'name',
-        'street',
-        'house_number',
-        'neighborhood',
-        'municipality',
-        'state',
-        'postal_code',
-        'country',
-        'city',
-
     ];
 
     public function client() {

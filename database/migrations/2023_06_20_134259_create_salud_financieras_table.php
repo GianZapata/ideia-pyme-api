@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('salud_financieras', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('client_id')->nullable()->constrained()->onDelete('cascade');
 
             /** Cuenta de resultados */
             $table->float("ventas", 12)->nullable(); // Ventas

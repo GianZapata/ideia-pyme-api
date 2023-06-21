@@ -184,11 +184,6 @@ class SatReportController extends Controller
                 'rfc'                   => isset($requestData['rfc']) ? Str::upper($requestData['rfc']) : null,
                 'anioConstitucion'      => $requestData['anioConstitucion'],
                 'sector_actividad'      => $requestData['sector_actividad'],
-            ]);
-
-            $satReport = SatReport::create([
-                'client_id'     => $client->id,
-                'name'          => $requestData['name'],
                 'street'        => $requestData['street'],
                 'house_number'  => $requestData['house_number'],
                 'neighborhood'  => $requestData['neighborhood'],
@@ -197,6 +192,10 @@ class SatReportController extends Controller
                 'postal_code'   => $requestData['postal_code'],
                 'country'       => $requestData['country'],
                 'city'          => $requestData['city'],
+            ]);
+
+            $satReport = SatReport::create([
+                'client_id'     => $client->id,
                 'total_tasks'   => 8,
             ]);
 

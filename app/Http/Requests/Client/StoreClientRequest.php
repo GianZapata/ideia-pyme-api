@@ -11,6 +11,15 @@ class StoreClientRequest extends FormRequest
         'name'                  => ['string'],
         'score'                 => ['numeric'],
         'rfc'                   => ['string'],
+        'street'                => ['string'],
+        'house_number'          => ['string'],
+        'neighborhood'          => ['string'],
+        'municipality'          => ['string'],
+        'state'                 => ['string'],
+        'postal_code'           => ['string'],
+        'country'               => ['string'],
+        'city'                  => ['string'],
+
         'anioConstitucion'      => ['numeric'],
         'sector_actividad'      => ['string'],
         'ventas'                => ['numeric'],
@@ -31,7 +40,20 @@ class StoreClientRequest extends FormRequest
         'prestamosActuales'     => ['numeric'],
     ];
 
-    protected $messages = [];
+    protected $messages = [
+        'street.required'           => 'La calle es requerida',
+        'house_number.required'     => 'El número de casa es requerido',
+        'neighborhood.required'     => 'La colonia es requerida',
+        'municipality.required'     => 'El municipio es requerido',
+        'state.required'            => 'El estado es requerido',
+        'postal_code.required'      => 'El código postal es requerido',
+        'country.required'          => 'El país es requerido',
+        'city.required'             => 'La ciudad es requerida',
+        'rfc.required'              => 'El RFC es requerido',
+        'name.required'             => 'El nombre es requerido',
+        'sector_actividad.required' => 'El sector de actividad es requerido',
+        'anioConstitucion.required' => 'El año de constitución es requerido',
+    ];
 
     /**
      * Determine if the user is authorized to make this request.

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\StoreClientRequest;
 use App\Http\Requests\Client\UpdateClientRequest;
 use App\Models\Client;
+use App\Models\SaludFinanciera;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -37,8 +38,28 @@ class ClientController extends Controller
                 'name'                  => $clientRequest['name'],
                 'score'                 => $clientRequest['score'] ?? null,
                 'rfc'                   => isset($clientRequest['rfc']) ? Str::upper($clientRequest['rfc']) : null,
-                'anioConstitucion'      => $clientRequest['anioConstitucion'],
-                'sector_actividad'      => $clientRequest['sector_actividad'],
+                'anioConstitucion'      => $clientRequest['anioConstitucion'] ?? null,
+                'sector_actividad'      => $clientRequest['sector_actividad'] ?? null,
+                'street'                => $clientRequest['street'] ?? null,
+                'house_number'          => $clientRequest['house_number'] ?? null,
+                'neighborhood'          => $clientRequest['neighborhood'] ?? null,
+                'municipality'          => $clientRequest['municipality'] ?? null,
+                'state'                 => $clientRequest['state'] ?? null,
+                'postal_code'           => $clientRequest['postal_code'] ?? null,
+                'country'               => $clientRequest['country'] ?? null,
+                'city'                  => $clientRequest['city'] ?? null,
+            ]);
+
+            if( !$client ){
+                return response()->json([
+                    'message' => 'No se pudo crear el cliente.',
+                    'errors' => [
+                        'client' => 'No se pudo crear el cliente.'
+                    ]
+                ], 400);
+            }
+
+            SaludFinanciera::create([
                 'ventas'                => $clientRequest['ventas'],
                 'ventasAnterior'        => $clientRequest['ventasAnterior'],
                 'trabActivo'            => $clientRequest['trabActivo'],
@@ -55,20 +76,12 @@ class ClientController extends Controller
                 'pasivoCirculante'      => $clientRequest['pasivoCirculante'],
                 'capitalContable'       => $clientRequest['capitalContable'],
                 'prestamosActuales'     => $clientRequest['prestamosActuales'],
+                'client_id'             => $client->id
             ]);
-
-            if( !$client ){
-                return response()->json([
-                    'message' => 'No se pudo crear el cliente.',
-                    'errors' => [
-                        'client' => 'No se pudo crear el cliente.'
-                    ]
-                ], 400);
-            }
 
             DB::commit();
             return response()->json([
-                'client'=> $client,
+                'client'            => $client,
             ], 200);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
@@ -121,53 +134,24 @@ class ClientController extends Controller
             }
 
             $client->update([
-                'name'                   => $clientRequest['name'] ?? $client->name,
-                'score'                  => $clientRequest['score'] ?? $client->score,
-                'rfc'                    => isset($clientRequest['rfc']) ? Str::upper($clientRequest['rfc']) : $client->rfc,
-                'anioConstitucion'       => $clientRequest['anioConstitucion'] ?? $client->anioConstitucion,
-                'sector_actividad'       => $clientRequest['sector_actividad'] ?? $client->sector_actividad,
-                'ventas'                 => $clientRequest['ventas'] ?? $client->ventas,
-                'ventasAnterior'         => $clientRequest['ventasAnterior'] ?? $client->ventasAnterior,
-                'trabActivo'             => $clientRequest['trabActivo'] ?? $client->trabActivo,
-                'otrosIng'               => $clientRequest['otrosIng'] ?? $client->otrosIng,
-                'resExplotacion'         => $clientRequest['resExplotacion'] ?? $client->resExplotacion,
-                'resFinanciero'          => $clientRequest['resFinanciero'] ?? $client->resFinanciero,
-                'resAntesImp'            => $clientRequest['resAntesImp'] ?? $client->resAntesImp,
-                'deudoresComerciales'    => $clientRequest['deudoresComerciales'] ?? $client->deudoresComerciales,
-                'inversionesFin'         => $clientRequest['inversionesFin'] ?? $client->inversionesFin,
-                'efectivoLiquidez'       => $clientRequest['efectivoLiquidez'] ?? $client->efectivoLiquidez,
-                'activoTotal'            => $clientRequest['activoTotal'] ?? $client->activoTotal,
-                'pasivoNoCirculante'     => $clientRequest['pasivoNoCirculante'] ?? $client->pasivoNoCirculante,
-                'provisionesLargoPlazo'  => $clientRequest['provisionesLargoPlazo'] ?? $client->provisionesLargoPlazo,
-                'pasivoCirculante'       => $clientRequest['pasivoCirculante'] ?? $client->pasivoCirculante,
-                'capitalContable'        => $clientRequest['capitalContable'] ?? $client->capitalContable,
-                'prestamosActuales'      => $clientRequest['prestamosActuales'] ?? $client->prestamosActuales,
+                'name'              => $clientRequest['name'] ?? $client->name,
+                'score'             => $clientRequest['score'] ?? $client->score,
+                'rfc'               => isset($clientRequest['rfc']) ? Str::upper($clientRequest['rfc']) : $client->rfc,
+                'anioConstitucion'  => $clientRequest['anioConstitucion'] ?? $client->anioConstitucion,
+                'sector_actividad'  => $clientRequest['sector_actividad'] ?? $client->sector_actividad,
+                'street'            => $clientRequest['street'] ?? $client->street,
+                'house_number'      => $clientRequest['house_number'] ?? $client->house_number,
+                'neighborhood'      => $clientRequest['neighborhood'] ?? $client->neighborhood,
+                'municipality'      => $clientRequest['municipality'] ?? $client->municipality,
+                'state'             => $clientRequest['state'] ?? $client->state,
+                'postal_code'       => $clientRequest['postal_code'] ?? $client->postal_code,
+                'country'           => $clientRequest['country'] ?? $client->country,
+                'city'              => $clientRequest['city'] ?? $client->city,
             ]);
-
-            if( $client->idAnalisis === null ) {
-                $client->update([
-                    'antiguedadEmpresa'      => $clientRequest['antiguedadEmpresa'] ?? null,
-                    'reconocimientoMercado'  => $clientRequest['reconocimientoMercado'] ?? null,
-                    'informeComercial'       => $clientRequest['informeComercial'] ?? null,
-                    'infraestructura'        => $clientRequest['infraestructura'] ?? null,
-                    'problemasLegales'       => $clientRequest['problemasLegales'] ?? null,
-                    'calidadCartera'         => $clientRequest['calidadCartera'] ?? null,
-                    'referenciasBancarias'   => $clientRequest['referenciasBancarias'] ?? null,
-                    'referenciasComerciales' => $clientRequest['referenciasComerciales'] ?? null,
-                    'importanciaMop'         => $clientRequest['importanciaMop'] ?? null,
-                    'perteneceHolding'       => $clientRequest['perteneceHolding'] ?? null,
-                    'idAnalisis'             => $clientRequest['idAnalisis'] ?? null,
-                ]);
-            }
-
-            $client->save();
-
-
 
             DB::commit();
             return response()->json([
-                'client'=> $client,
-                'quotation' => isset($newQuotation) ? $newQuotation : null
+                'client'    => $client,
             ], 200);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
@@ -182,6 +166,75 @@ class ClientController extends Controller
         }
     }
 
+    public function riskScore( Request $request, $clientId ) {
+        $requestData = $request->validate([
+            'idSaludFinanciera'      => ['required', 'numeric', 'exists:salud_financieras,id'],
+            'antiguedadEmpresa'      => ['required', 'numeric'],
+            'reconocimientoMercado'  => ['required', 'numeric'],
+            'informeComercial'       => ['required', 'numeric'],
+            'infraestructura'        => ['required', 'numeric'],
+            'problemasLegales'       => ['required', 'numeric'],
+            'calidadCartera'         => ['required', 'numeric'],
+            'referenciasBancarias'   => ['required', 'numeric'],
+            'referenciasComerciales' => ['required', 'numeric'],
+            'importanciaMop'         => ['required', 'numeric'],
+            'perteneceHolding'       => ['required', 'numeric'],
+        ]);
+
+        $client = Client::find($clientId);
+        if(!$client){
+            return response()->json([
+                'message' => 'No se encontró el cliente.',
+                'errors' => [
+                    'client' => 'No se encontró el cliente.'
+                ]
+            ], 400);
+        }
+
+        /** @var \App\Models\SaludFinanciera $saludFinanciera **/
+        $saludFinanciera = SaludFinanciera::find($requestData['idSaludFinanciera']);
+
+        if(!$saludFinanciera){
+            return response()->json([
+                'message' => 'No se encontró la salud financiera.',
+                'errors' => [
+                    'saludFinanciera' => 'No se encontró la salud financiera.'
+                ]
+            ], 400);
+        }
+
+        DB::beginTransaction();
+        try {
+            $saludFinanciera->update([
+                'antiguedadEmpresa' => $requestData['antiguedadEmpresa'] ?? $saludFinanciera->antiguedadEmpresa,
+                'reconocimientoMercado' => $requestData['reconocimientoMercado'] ?? $saludFinanciera->reconocimientoMercado,
+                'informeComercial' => $requestData['informeComercial'] ?? $saludFinanciera->informeComercial,
+                'infraestructura' => $requestData['infraestructura'] ?? $saludFinanciera->infraestructura,
+                'problemasLegales' => $requestData['problemasLegales'] ?? $saludFinanciera->problemasLegales,
+                'calidadCartera' => $requestData['calidadCartera'] ?? $saludFinanciera->calidadCartera,
+                'referenciasBancarias' => $requestData['referenciasBancarias'] ?? $saludFinanciera->referenciasBancarias,
+                'referenciasComerciales' => $requestData['referenciasComerciales'] ?? $saludFinanciera->referenciasComerciales,
+                'importanciaMop' => $requestData['importanciaMop'] ?? $saludFinanciera->importanciaMop,
+                'perteneceHolding' => $requestData['perteneceHolding'] ?? $saludFinanciera->perteneceHolding,
+            ]);
+
+            DB::commit();
+            return response()->json([
+                'client' => $client ,
+            ], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Ocurrió un error al actualizar el score de riesgo.',
+                'errors' => [
+                    'client' => 'Ocurrió un error al actualizar el score de riesgo.'
+                ],
+                'exception' => $th->getMessage()
+            ], 500);
+        }
+
+
+    }
 
     /**
      * Función para obtener todos los clientes asociados al usuario autenticado.
@@ -205,8 +258,8 @@ class ClientController extends Controller
             ], 400);
         }
 
-        $clientQuery = Client::where('user_id', $authUser->id)->with('report')
-            ->with('user');
+        $clientQuery = Client::where('user_id', $authUser->id)
+            ->with('report','saludFinancieras','user');
 
         if( empty( $searchTerm )) {
             $clients = $clientQuery->paginate($limit, ['*'], 'page', $page);
@@ -246,7 +299,7 @@ class ClientController extends Controller
 
         $client = Client::where('id', $clientId)
             ->where('user_id', $authUser->id)
-            ->with('user','report')
+            ->with('user','report','saludFinancieras')
             ->first();
 
         if(!$client){

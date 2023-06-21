@@ -12,28 +12,8 @@ class SaludFinanciera extends Model
 {
     use HasFactory;
 
-    private $sectorActividadTypes = [
-        "AGRICULTURA_Y_GANADERIA"    => "Industrial",
-        "INDUSTRIA_EXTRACTIVA"       => "Industrial",
-        "INDUSTRIA_MANUFACTURERA"    => "Industrial",
-        "ENERGIA"                    => "Industrial",
-        "AGUAS_Y_SANEAMIENTO"        => "Industrial",
-        "CONSTRUCCION"               => "Industrial",
-        "COMERCIAL"                  => "Comercial",
-        "TRANSPORTE"                 => "Servicio",
-        "HOTELERIA"                  => "Hotelería",
-        "COMUNICACIÓN"               => "Comunicación",
-        "FINANZAS_Y_SEGUROS"         => "Servicio",
-        "ACTIVIDADES_INMOBILIARIAS"  => "Servicio",
-        "ACTIVIDADES_PROFESIONALES"  => "Servicio",
-        "OTROS_SERVICIOS"            => "Servicio",
-        "OTRAS_ACTIVIDADES"          => "Otras"
-    ];
-
     protected $fillable = [
         'client_id',
-        'anioConstitucion',
-        'sector_actividad',
         'ventas',
         'ventasAnterior',
         'trabActivo',
@@ -60,41 +40,54 @@ class SaludFinanciera extends Model
         'referenciasComerciales',
         'importanciaMop',
         'perteneceHolding',
-        'idAnalisis',
     ];
 
     protected $appends = [
-        'sector_actividad_name',
+        'salud_financiera',
+        'score_cualitativo',
+        'score_completo',
+        'can_request_risk_score'
     ];
+
 
     public function client() {
         return $this->belongsTo(Client::class);
     }
 
-    // public function saludFinanciera(): Attribute {
-    //     $financialHealthService = new FinancialHealthService();
-    //     return new Attribute(
-    //         get: fn () => $financialHealthService->calculateFinancialHealth($this)
-    //     );
-    // }
-
-    // public function scoreCualitativo(): Attribute {
-    //     $financialHealthService = new FinancialHealthService();
-    //     return new Attribute(
-    //         get: fn () => $financialHealthService->calculateQualitativeScore($this)
-    //     );
-    // }
-    // public function scoreCompleto(): Attribute {
-    //     $saludFinanciera = $this->salud_financiera;
-    //     $scoreCuantitativo = $saludFinanciera ? $saludFinanciera['scoreCuantitativo'] : 0;
-    //     return new Attribute(
-    //         get: fn () => $this->score_cualitativo + $scoreCuantitativo
-    //     );
-    // }
-
-    public function sectorActividadName(): Attribute {
+    public function saludFinanciera(): Attribute {
+        $financialHealthService = new FinancialHealthService();
         return new Attribute(
-            get: fn () => $this->sector_actividad ? $this->sectorActividadTypes[$this->sector_actividad] : null
+            get: fn () => $financialHealthService->calculateFinancialHealth($this)
+        );
+    }
+
+    public function scoreCualitativo(): Attribute {
+        $financialHealthService = new FinancialHealthService();
+        return new Attribute(
+            get: fn () => $financialHealthService->calculateQualitativeScore($this)
+        );
+    }
+    public function scoreCompleto(): Attribute {
+        $saludFinanciera = $this->salud_financiera;
+        $scoreCuantitativo = $saludFinanciera ? $saludFinanciera['scoreCuantitativo'] : 0;
+        return new Attribute(
+            get: fn () => $this->score_cualitativo + $scoreCuantitativo
+        );
+    }
+
+    public function canRequestRiskScore(): Attribute {
+        return new Attribute(
+            get: fn () =>
+                !$this->antiguedadEmpresa ||
+                !$this->reconocimientoMercado ||
+                !$this->informeComercial ||
+                !$this->infraestructura ||
+                !$this->problemasLegales ||
+                !$this->calidadCartera ||
+                !$this->referenciasBancarias ||
+                !$this->referenciasComerciales ||
+                !$this->importanciaMop ||
+                !$this->perteneceHolding
         );
     }
 

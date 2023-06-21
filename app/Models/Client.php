@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\SaludFinanciera;
 use App\Models\SatReport;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -39,9 +40,9 @@ class Client extends Model
     protected array $guard_name = ['api', 'web'];
 
     protected $appends = [
-        'salud_financiera',
-        'score_cualitativo',
-        'score_completo',
+        // 'salud_financiera',
+        // 'score_cualitativo',
+        // 'score_completo',
         'sector_actividad_name',
         'has_reports',
         'can_check_report',
@@ -54,33 +55,14 @@ class Client extends Model
         'rfc',
         'anioConstitucion',
         'sector_actividad',
-        'ventas',
-        'ventasAnterior',
-        'trabActivo',
-        'otrosIng',
-        'resExplotacion',
-        'resFinanciero',
-        'resAntesImp',
-        'deudoresComerciales',
-        'inversionesFin',
-        'efectivoLiquidez',
-        'activoTotal',
-        'pasivoNoCirculante',
-        'provisionesLargoPlazo',
-        'pasivoCirculante',
-        'capitalContable',
-        'prestamosActuales',
-        'antiguedadEmpresa',
-        'reconocimientoMercado',
-        'informeComercial',
-        'infraestructura',
-        'problemasLegales',
-        'calidadCartera',
-        'referenciasBancarias',
-        'referenciasComerciales',
-        'importanciaMop',
-        'perteneceHolding',
-        'idAnalisis',
+        'street',
+        'house_number',
+        'neighborhood',
+        'municipality',
+        'state',
+        'postal_code',
+        'country',
+        'city',
     ];
 
     public function hasReports(): Attribute {
@@ -89,25 +71,8 @@ class Client extends Model
         );
     }
 
-    public function saludFinanciera(): Attribute {
-        $financialHealthService = new FinancialHealthService();
-        return new Attribute(
-            get: fn () => $financialHealthService->calculateFinancialHealth($this)
-        );
-    }
-
-    public function scoreCualitativo(): Attribute {
-        $financialHealthService = new FinancialHealthService();
-        return new Attribute(
-            get: fn () => $financialHealthService->calculateQualitativeScore($this)
-        );
-    }
-    public function scoreCompleto(): Attribute {
-        $saludFinanciera = $this->salud_financiera;
-        $scoreCuantitativo = $saludFinanciera ? $saludFinanciera['scoreCuantitativo'] : 0;
-        return new Attribute(
-            get: fn () => $this->score_cualitativo + $scoreCuantitativo
-        );
+    public function saludFinancieras(){
+        return $this->hasMany(SaludFinanciera::class);
     }
 
     public function sectorActividadName(): Attribute {

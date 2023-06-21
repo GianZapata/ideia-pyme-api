@@ -102,6 +102,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
         Route::put('/{id}', [ClientController::class, 'update'])
             ->name('clients.update');
+
+        Route::put('/{id}/risk-score', [ClientController::class, 'riskScore'])
+            ->name('clients.riskScore');
     });
 });
 

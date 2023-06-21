@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Client;
+use App\Models\SaludFinanciera;
 
 class FinancialHealthService
 {
@@ -146,37 +147,21 @@ class FinancialHealthService
      * @return array Array que contiene la información sobre la salud financiera del cliente,
      *               incluyendo puntajes, calificaciones y descripciones.
     */
-    public function calculateFinancialHealth( Client $client )
+    public function calculateFinancialHealth( SaludFinanciera $saludFinanciera )
     {
-        $ventas = $client->ventas;
-        $ventasAnioAnterior = $client->ventasAnterior;
-        $resultadoDeExplotacion = $client->resExplotacion;
-        $resultadoFinanciero = $client->resFinanciero;
-        $resultadoAntesImpuestos = $client->resAntesImp;
-        $deudoresComerciales = $client->deudoresComerciales;
-        $inversionesFinancierasCortoPlazo = $client->inversionesFin;
-        $efectivoLiquidez = $client->efectivoLiquidez;
-        $activoTotal = $client->activoTotal;
-        $pasivoNoCirculante = $client->pasivoNoCirculante;
-        $provisionesLargoPlazo = $client->provisionesLargoPlazo;
-        $pasivoCirculante = $client->pasivoCirculante;
-        $prestamosActuales = $client->prestamosActuales ?? 600;
-
-        if(
-            !$ventas  ||
-            !$ventasAnioAnterior  ||
-            !$resultadoDeExplotacion  ||
-            !$resultadoFinanciero  ||
-            !$resultadoAntesImpuestos  ||
-            !$deudoresComerciales  ||
-            !$inversionesFinancierasCortoPlazo  ||
-            !$efectivoLiquidez  ||
-            !$activoTotal  ||
-            !$pasivoNoCirculante  ||
-            !$provisionesLargoPlazo  ||
-            !$pasivoCirculante  ||
-            !$prestamosActuales
-        ) return [];
+        $ventas = $saludFinanciera->ventas;
+        $ventasAnioAnterior = $saludFinanciera->ventasAnterior;
+        $resultadoDeExplotacion = $saludFinanciera->resExplotacion;
+        $resultadoFinanciero = $saludFinanciera->resFinanciero;
+        $resultadoAntesImpuestos = $saludFinanciera->resAntesImp;
+        $deudoresComerciales = $saludFinanciera->deudoresComerciales;
+        $inversionesFinancierasCortoPlazo = $saludFinanciera->inversionesFin;
+        $efectivoLiquidez = $saludFinanciera->efectivoLiquidez;
+        $activoTotal = $saludFinanciera->activoTotal;
+        $pasivoNoCirculante = $saludFinanciera->pasivoNoCirculante;
+        $provisionesLargoPlazo = $saludFinanciera->provisionesLargoPlazo;
+        $pasivoCirculante = $saludFinanciera->pasivoCirculante;
+        $prestamosActuales = $saludFinanciera->prestamosActuales ?? 600;
 
         $inventario = 0;
 
@@ -400,7 +385,7 @@ class FinancialHealthService
         ];
     }
 
-    public static function calculateQualitativeScore( Client $client )
+    public static function calculateQualitativeScore( SaludFinanciera $saludFinanciera )
     {
         $ponderaciones = self::PONDERACION;
 
@@ -417,9 +402,9 @@ class FinancialHealthService
             "perteneceHolding"
         ];
 
-        $scoreCualitativo = array_reduce($requisitos, function ($carry, $requisito) use ($client, $ponderaciones) {
-            if (isset($client->$requisito)) {
-                $valorRequisito = $client->$requisito;
+        $scoreCualitativo = array_reduce($requisitos, function ($carry, $requisito) use ($saludFinanciera, $ponderaciones) {
+            if (isset($saludFinanciera->$requisito)) {
+                $valorRequisito = $saludFinanciera->$requisito;
                 $puntaje = $ponderaciones['cualitativas'][$valorRequisito] ?? 0;
                 $carry[$requisito] = $puntaje;
             }
