@@ -19,25 +19,10 @@ class StoreClientRequest extends FormRequest
         'postal_code'           => ['string'],
         'country'               => ['string'],
         'city'                  => ['string'],
-
         'anioConstitucion'      => ['numeric'],
         'sector_actividad'      => ['string'],
-        'ventas'                => ['numeric'],
-        'ventasAnterior'        => ['numeric'],
-        'trabActivo'            => ['numeric'],
-        'otrosIng'              => ['numeric'],
-        'resExplotacion'        => ['numeric'],
-        'resFinanciero'         => ['numeric'],
-        'resAntesImp'           => ['numeric'],
-        'deudoresComerciales'   => ['numeric'],
-        'inversionesFin'        => ['numeric'],
-        'efectivoLiquidez'      => ['numeric'],
-        'activoTotal'           => ['numeric'],
-        'pasivoNoCirculante'    => ['numeric'],
-        'provisionesLargoPlazo' => ['numeric'],
-        'pasivoCirculante'      => ['numeric'],
-        'capitalContable'       => ['numeric'],
-        'prestamosActuales'     => ['numeric'],
+        'with_partners'         => ['required', 'boolean'],
+        'partners_data'         => ['required_if:with_partners,true', 'array'],
     ];
 
     protected $messages = [

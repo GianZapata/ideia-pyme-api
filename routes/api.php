@@ -100,6 +100,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('/', [ClientController::class, 'store'])
             ->name('clients.store');
 
+        Route::post('/{id}/salud-financiera', [ClientController::class, 'saludFinanciera'])
+            ->name('clients.saludFinanciera');
+
         Route::put('/{id}', [ClientController::class, 'update'])
             ->name('clients.update');
 

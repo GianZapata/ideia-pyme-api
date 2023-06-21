@@ -22,6 +22,8 @@ class UpdateClientRequest extends FormRequest
         'country'               => ['string'],
         'city'                  => ['string'],
 
+        'with_partners'         => ['required', 'boolean'],
+        'partners_data'         => ['required_if:with_partners,true', 'array'],
     ];
 
     protected $messages = [

@@ -7,6 +7,8 @@ use App\Http\Requests\Client\StoreClientRequest;
 use App\Http\Requests\Client\UpdateClientRequest;
 use App\Models\Client;
 use App\Models\SaludFinanciera;
+use App\Models\SatReport;
+use App\Models\SatReportPartners;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -59,25 +61,27 @@ class ClientController extends Controller
                 ], 400);
             }
 
-            SaludFinanciera::create([
-                'ventas'                => $clientRequest['ventas'],
-                'ventasAnterior'        => $clientRequest['ventasAnterior'],
-                'trabActivo'            => $clientRequest['trabActivo'],
-                'otrosIng'              => $clientRequest['otrosIng'],
-                'resExplotacion'        => $clientRequest['resExplotacion'],
-                'resFinanciero'         => $clientRequest['resFinanciero'],
-                'resAntesImp'           => $clientRequest['resAntesImp'],
-                'deudoresComerciales'   => $clientRequest['deudoresComerciales'],
-                'inversionesFin'        => $clientRequest['inversionesFin'],
-                'efectivoLiquidez'      => $clientRequest['efectivoLiquidez'],
-                'activoTotal'           => $clientRequest['activoTotal'],
-                'pasivoNoCirculante'    => $clientRequest['pasivoNoCirculante'],
-                'provisionesLargoPlazo' => $clientRequest['provisionesLargoPlazo'],
-                'pasivoCirculante'      => $clientRequest['pasivoCirculante'],
-                'capitalContable'       => $clientRequest['capitalContable'],
-                'prestamosActuales'     => $clientRequest['prestamosActuales'],
-                'client_id'             => $client->id
+            $withPartners = filter_var($clientRequest['with_partners'] ?? null, FILTER_VALIDATE_BOOLEAN);
+
+            $satReport = SatReport::create([
+                'client_id'     => $client->id,
+                'with_partners' => $withPartners,
+                'total_tasks'   => 8,
             ]);
+
+            if ($withPartners) {
+                foreach ($clientRequest['partners_data'] as $key => $partner) {
+                    SatReportPartners::create([
+                        'sat_report_id'     => $satReport->id,
+                        'rfc'               => $partner['rfc'] ?? "",
+                        'curp'              => $partner['curp'] ?? "",
+                        'name'              => $partner['name'] ?? "",
+                        'last_name'         => $partner['last_name'] ?? "",
+                        'second_last_name'  => $partner['second_last_name'] ?? "",
+                        'percentage'        => $partner['percentage'] ?? "",
+                    ]);
+                }
+            }
 
             DB::commit();
             return response()->json([
@@ -148,6 +152,28 @@ class ClientController extends Controller
                 'country'           => $clientRequest['country'] ?? $client->country,
                 'city'              => $clientRequest['city'] ?? $client->city,
             ]);
+
+            $withPartners = filter_var($clientRequest['with_partners'] ?? null, FILTER_VALIDATE_BOOLEAN);
+            $satReport = SatReport::firstOrCreate([
+                'client_id'     => $client->id,
+            ], [
+                'with_partners' => $withPartners,
+                'total_tasks'   => 8,
+            ]);
+
+            if ($withPartners) {
+                foreach ($clientRequest['partners_data'] as $key => $partner) {
+                    SatReportPartners::create([
+                        'sat_report_id'     => $satReport->id,
+                        'rfc'               => $partner['rfc'] ?? "",
+                        'curp'              => $partner['curp'] ?? "",
+                        'name'              => $partner['name'] ?? "",
+                        'last_name'         => $partner['last_name'] ?? "",
+                        'second_last_name'  => $partner['second_last_name'] ?? "",
+                        'percentage'        => $partner['percentage'] ?? "",
+                    ]);
+                }
+            }
 
             DB::commit();
             return response()->json([
@@ -314,6 +340,86 @@ class ClientController extends Controller
         }
 
         return response()->json([ 'client' => $client ], 200);
+    }
+
+    public function saludFinanciera( Request $request, $clientId ) {
+        $clientRequestData = $request->validate([
+            'ventas'                => ['required', 'numeric'],
+            'ventasAnterior'        => ['required', 'numeric'],
+            'trabActivo'            => ['required', 'numeric'],
+            'otrosIng'              => ['required', 'numeric'],
+            'resExplotacion'        => ['required', 'numeric'],
+            'resFinanciero'         => ['required', 'numeric'],
+            'resAntesImp'           => ['required', 'numeric'],
+            'deudoresComerciales'   => ['required', 'numeric'],
+            'inversionesFin'        => ['required', 'numeric'],
+            'efectivoLiquidez'      => ['required', 'numeric'],
+            'activoTotal'           => ['required', 'numeric'],
+            'pasivoNoCirculante'    => ['required', 'numeric'],
+            'provisionesLargoPlazo' => ['required', 'numeric'],
+            'pasivoCirculante'      => ['required', 'numeric'],
+            'capitalContable'       => ['required', 'numeric'],
+            'prestamosActuales'     => ['required', 'numeric'],
+        ]);
+
+        DB::beginTransaction();
+        try {
+            /** @var \App\Models\User $authUser **/
+            $authUser = Auth::user();
+            if(!$authUser){
+                return response()->json([
+                    'message' => 'No se encontró el usuario autenticado.',
+                    'errors' => [
+                        'auth' => 'No se encontró el usuario autenticado.'
+                    ]
+                ], 400);
+            }
+
+            /** @var \App\Models\Client $client **/
+            $client = Client::find( $clientId );
+            if( !$client ){
+                return response()->json([
+                    'message' => 'No se encontró el cliente.',
+                    'errors' => [
+                        'client' => 'No se encontró el cliente.'
+                    ]
+                ], 400);
+            }
+
+            SaludFinanciera::create([
+                'ventas'                => floatval($clientRequestData['ventas']),
+                'ventasAnterior'        => floatval($clientRequestData['ventasAnterior']),
+                'trabActivo'            => floatval($clientRequestData['trabActivo']),
+                'otrosIng'              => floatval($clientRequestData['otrosIng']),
+                'resExplotacion'        => floatval($clientRequestData['resExplotacion']),
+                'resFinanciero'         => floatval($clientRequestData['resFinanciero']),
+                'resAntesImp'           => floatval($clientRequestData['resAntesImp']),
+                'deudoresComerciales'   => floatval($clientRequestData['deudoresComerciales']),
+                'inversionesFin'        => floatval($clientRequestData['inversionesFin']),
+                'efectivoLiquidez'      => floatval($clientRequestData['efectivoLiquidez']),
+                'activoTotal'           => floatval($clientRequestData['activoTotal']),
+                'pasivoNoCirculante'    => floatval($clientRequestData['pasivoNoCirculante']),
+                'provisionesLargoPlazo' => floatval($clientRequestData['provisionesLargoPlazo']),
+                'pasivoCirculante'      => floatval($clientRequestData['pasivoCirculante']),
+                'capitalContable'       => floatval($clientRequestData['capitalContable']),
+                'prestamosActuales'     => floatval($clientRequestData['prestamosActuales']),
+                'client_id'             => $client->id
+            ]);
+
+            DB::commit();
+            return response()->json([
+                'client'    => $client,
+            ], 200);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Ocurrió un error al crear el cliente.',
+                'errors' => [],
+                'exception' => $th->getMessage()
+            ], 500);
+        }
+
     }
 
 }
