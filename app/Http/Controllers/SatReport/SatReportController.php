@@ -97,12 +97,12 @@ class SatReportController extends Controller
                 'postal_code'   => $requestData['postal_code'],
                 'country'       => $requestData['country'],
                 'city'          => $requestData['city'],
-                'with_partners' => $request['with_partners'],
+                'with_partners' => $requestData['with_partners'],
                 'total_tasks'   => 8,
             ]);
 
             if ($requestData['with_partners']) {
-                foreach ($request['partners_data'] as $key => $partner) {
+                foreach ($requestData['partners_data'] as $key => $partner) {
                     SatReportPartners::create([
                         'sat_report_id'     => $satReport->id,
                         'rfc'               => $partner['rfc'] ?? "",

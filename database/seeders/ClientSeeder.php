@@ -16,8 +16,8 @@ class ClientSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::find(1);
-        if(!$user) return;
+        // $user = User::find(1);
+        // if(!$user) return;
 
         // $rfcEmisores = Emisor::all();
         // $rfcReceptores = Receptor::all();
@@ -28,7 +28,7 @@ class ClientSeeder extends Seeder
             Client::factory()->create([
                 'rfc' => $rfc->rfc,
                 'name' => $rfc->nombre,
-                'user_id' => $user->id,
+                // 'user_id' => $user->id,
             ]);
         }
     }

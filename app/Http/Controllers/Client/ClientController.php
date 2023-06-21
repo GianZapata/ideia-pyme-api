@@ -284,7 +284,7 @@ class ClientController extends Controller
             ], 400);
         }
 
-        $clientQuery = Client::with('report','saludFinancieras','user');
+        $clientQuery = Client::query();
         // $clientQuery = Client::where('user_id', $authUser->id)
         //     ->with('report','saludFinancieras','user');
 
