@@ -258,8 +258,9 @@ class ClientController extends Controller
             ], 400);
         }
 
-        $clientQuery = Client::where('user_id', $authUser->id)
-            ->with('report','saludFinancieras','user');
+        $clientQuery = Client::with('report','saludFinancieras','user');
+        // $clientQuery = Client::where('user_id', $authUser->id)
+        //     ->with('report','saludFinancieras','user');
 
         if( empty( $searchTerm )) {
             $clients = $clientQuery->paginate($limit, ['*'], 'page', $page);
@@ -298,9 +299,12 @@ class ClientController extends Controller
         }
 
         $client = Client::where('id', $clientId)
-            ->where('user_id', $authUser->id)
             ->with('user','report','saludFinancieras')
             ->first();
+        // $client = Client::where('id', $clientId)
+        //     ->where('user_id', $authUser->id)
+        //     ->with('user','report','saludFinancieras')
+        //     ->first();
 
         if(!$client){
             return response()->json([
