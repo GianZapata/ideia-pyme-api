@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationEmailController;
 use App\Http\Controllers\Client\ClientController;
+use App\Http\Controllers\ClientsAttachmentsController;
 use App\Http\Controllers\Reports\Empresa\SituacionLaboral\ComportamientoHistoricoNominaController;
 use App\Http\Controllers\Reports\Empresa\SituacionLaboral\DistribucionNominaController;
 use App\Http\Controllers\Reports\SituacionJuridicaController;
@@ -91,7 +92,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     /** api/clients */
     Route::group(['prefix' => 'clients'], function () {
-        
+
         Route::put('/vobo', [ClientController::class, 'setVobo'])
             ->name('clients.vobo');
 
@@ -113,7 +114,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::put('/{id}/risk-score', [ClientController::class, 'riskScore'])
             ->name('clients.riskScore');
 
-        
+        Route::post('{client}/attachments', [ClientsAttachmentsController::class, 'store']);
     });
 
 

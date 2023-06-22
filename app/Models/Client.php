@@ -65,17 +65,20 @@ class Client extends Model
         'city',
     ];
 
-    public function hasReports(): Attribute {
+    public function hasReports(): Attribute
+    {
         return new Attribute(
             get: fn () => $this->reports()->count() > 0
         );
     }
 
-    public function saludFinancieras(){
+    public function saludFinancieras()
+    {
         return $this->hasMany(SaludFinanciera::class);
     }
 
-    public function sectorActividadName(): Attribute {
+    public function sectorActividadName(): Attribute
+    {
         return new Attribute(
             get: fn () => $this->sector_actividad ? $this->sectorActividadTypes[$this->sector_actividad] : null
         );
@@ -92,22 +95,30 @@ class Client extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function reports(){
+    public function reports()
+    {
         return $this->hasMany(SatReport::class, 'client_id');
     }
 
-    public function report(){
+    public function report()
+    {
         return $this->hasOne(SatReport::class, 'client_id');
     }
 
-    public function canCheckReport(): Attribute {
+    public function canCheckReport(): Attribute
+    {
         return new Attribute(
             get: fn () => $this->report && $this->report->total_tasks === intval($this->report->total_tasks_completed)
         );
     }
 
+    public function attachments()
+    {
+        return $this->hasMany(ClientsAttachment::class);
+    }
 }
