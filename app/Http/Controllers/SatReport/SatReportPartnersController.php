@@ -26,13 +26,6 @@ class SatReportPartnersController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreSatReportPartnersRequest $request)
-    {
-        //
-    }
 
     /**
      * Display the specified resource.
@@ -50,13 +43,6 @@ class SatReportPartnersController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateSatReportPartnersRequest $request, SatReportPartners $satReportPartners)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.

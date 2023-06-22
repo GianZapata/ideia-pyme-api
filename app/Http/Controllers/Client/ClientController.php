@@ -422,4 +422,60 @@ class ClientController extends Controller
 
     }
 
+    public function setVobo(Request $request){
+
+        $clientRequestData = $request->validate([
+            'client_id' => ['required', 'numeric'],
+            'vobo' => ['required', 'string', 'in:aprobado,rechazado'],
+        ], [
+            'client_id.required' => 'El id del cliente es requerido.',
+            'client_id.numeric' => 'El id del cliente debe ser numérico.',
+            'vobo.required' => 'El vobo es requerido.',
+            'vobo.string' => 'El vobo debe ser una cadena de texto.',
+            'vobo.in' => 'El vobo debe ser aprobado o rechazado.',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            /** @var \App\Models\User $authUser **/
+            $authUser = Auth::user();
+            if(!$authUser){
+                return response()->json([
+                    'message' => 'No se encontró el usuario autenticado.',
+                    'errors' => [
+                        'auth' => 'No se encontró el usuario autenticado.'
+                    ]
+                ], 400);
+            }
+
+            /** @var \App\Models\Client $client **/
+            $client = Client::find( $clientRequestData['client_id'] );
+            if( !$client ){
+                return response()->json([
+                    'message' => 'No se encontró el cliente.',
+                    'errors' => [
+                        'client' => 'No se encontró el cliente.'
+                    ]
+                ], 400);
+            }
+
+            $client->vobo = $clientRequestData['vobo'];
+            $client->save();
+
+            DB::commit();
+            return response()->json([
+                'client'    => $client,
+            ], 200);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Ocurrió un error al crear el cliente.',
+                'errors' => [],
+                'exception' => $th->getMessage()
+            ], 500);
+        }
+
+    }
+
 }

@@ -31,6 +31,8 @@ return new class extends Migration
             $table->string('country')->nullable();
             $table->string('city')->nullable();
 
+            $table->string('vobo')->default('pendiente');
+
             $table->timestamps();
             $table->softDeletes();
         });

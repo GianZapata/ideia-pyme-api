@@ -91,6 +91,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     /** api/clients */
     Route::group(['prefix' => 'clients'], function () {
+        
+        Route::put('/vobo', [ClientController::class, 'setVobo'])
+            ->name('clients.vobo');
+
         Route::get('/', [ClientController::class, 'getAll'])
             ->name('clients.getAll');
 
@@ -108,7 +112,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
         Route::put('/{id}/risk-score', [ClientController::class, 'riskScore'])
             ->name('clients.riskScore');
+
+        
     });
+
+
+
 });
 
 

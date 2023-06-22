@@ -28,9 +28,11 @@ class VerifyCiecController extends Controller
             'curl' => [CURLOPT_SSL_CIPHER_LIST => 'DEFAULT@SECLEVEL=1']
         ]);
         $gateway = new SatHttpGateway($insecureClient);
-        $satScraper = new SatScraper(CiecSessionManager::create($rfc, $password, $captchaResolver), $gateway);
         try {
+            $session = CiecSessionManager::create($rfc, $password, $captchaResolver);
+            $satScraper = new SatScraper($session, $gateway);
             $satScraper->confirmSessionIsAlive();
+
             $this->message = 'Credenciales correctas';
             $this->response = 'LOGUEADO';
 
