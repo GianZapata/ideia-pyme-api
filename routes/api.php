@@ -114,7 +114,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::put('/{id}/risk-score', [ClientController::class, 'riskScore'])
             ->name('clients.riskScore');
 
-        Route::post('{client}/attachments', [ClientsAttachmentsController::class, 'store']);
     });
 
 
@@ -122,7 +121,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 });
 
 Route::group(['prefix' => 'clients'], function () {
-    Route::post('{client}/attachments', [ClientsAttachmentsController::class, 'store']);
+    Route::post('{id}/attachments', [ClientsAttachmentsController::class, 'store']);
 });
 
 Route::group(['prefix' => 'reports'], function (){

@@ -54,10 +54,21 @@ class ClientsAttachmentsController extends Controller
 
 
     // }
-    public function store(Request $request, Client $client)
+    public function store(Request $request, $clientId)
     {
         $attachments = [];
         try {
+
+            $client = Client::find($clientId);
+            if(!$client) {
+                return response()->json([
+                    'message' => 'No se encontro el cliente',
+                    'errors' => [
+                        'client' => 'No se encontro el cliente'
+                    ]
+                ], 401);
+            }
+
             foreach ($request->file('attachments') as $generalFile) {
                 $attachment = $this->createAttachmentFromUploadedFile($generalFile);
                 // create clients attachments
