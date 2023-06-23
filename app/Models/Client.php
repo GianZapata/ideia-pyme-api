@@ -119,6 +119,6 @@ class Client extends Model
 
     public function attachments()
     {
-        return $this->hasMany(ClientsAttachment::class);
+        return $this->hasMany(ClientsAttachments::class);
     }
 }
