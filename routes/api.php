@@ -121,6 +121,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 });
 
+Route::group(['prefix' => 'clients'], function () {
+    Route::post('{client}/attachments', [ClientsAttachmentsController::class, 'store']);
+});
 
 Route::group(['prefix' => 'reports'], function (){
 
