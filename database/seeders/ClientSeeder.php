@@ -8,6 +8,7 @@ use App\Models\Receptor;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ClientSeeder extends Seeder
 {
@@ -23,8 +24,22 @@ class ClientSeeder extends Seeder
         // $rfcReceptores = Receptor::all();
         // $rfcs = $rfcEmisores->concat($rfcReceptores);
 
+        $files = collect(Storage::allFiles("public/xml"));
+
+        $rfcs = $files->map(function ($file) {
+            // Obtén el path del archivo y divídelo en segmentos.
+            $segments = explode('/', $file);
+
+            // El RFC debería ser el tercer segmento en tu estructura de archivos.
+            $rfc = $segments[2];
+
+            return $rfc;
+        })->unique();
+
+        $emisores = Emisor::whereIn('rfc', $rfcs)->get();
+
         /** @var \App\Models\Client $client **/
-        foreach (Emisor::all() as $rfc) {
+        foreach ($emisores as $rfc) {
             Client::factory()->create([
                 'rfc' => $rfc->rfc,
                 'name' => $rfc->nombre,

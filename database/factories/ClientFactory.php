@@ -38,12 +38,33 @@ class ClientFactory extends Factory
      */
     public function definition(): array
     {
+
+
+        $countries = config('countries');
+
+        $country = $this->faker->randomElement(array_keys($countries));
+
+        $federalEntities = collect(config('federal_entities'));
+        $randomEntity = $federalEntities->random();
+        $stateSlug = $randomEntity['slug'];
+
+        $randomMunicipality = collect($randomEntity['municipalities'])->random();
+        $municipalityCode = $randomMunicipality['code'];
+
         return [
-            'name'                   => $this->faker->company(),
-            'score'                  => $this->faker->randomFloat(2, 300, 850),
-            'rfc'                    => $this->faker->mexicanRfcFisica(),
-            'anioConstitucion'       => $this->faker->year,
-            'sector_actividad'       => $this->faker->randomElement(self::$sectorActividad),
+            'name'              => $this->faker->company(),
+            'score'             => $this->faker->randomFloat(2, 300, 850),
+            'rfc'               => $this->faker->mexicanRfcFisica(),
+            'anioConstitucion'  => $this->faker->year,
+            'sector_actividad'  => $this->faker->randomElement(self::$sectorActividad),
+            'street'            => $this->faker->streetName,
+            'house_number'      => $this->faker->buildingNumber,
+            'neighborhood'      => $this->faker->secondaryAddress(),
+            'postal_code'       => $this->faker->postcode,
+            'city'              => $this->faker->city,
+            'country'           => $country,
+            'state'             => $stateSlug,
+            'municipality'      => $municipalityCode
         ];
     }
 }

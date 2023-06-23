@@ -62,10 +62,15 @@ Para procesar los archivos XML, se ha creado un comando personalizado que puede 
 
 Para ejecutar el comando, abre una terminal en el directorio del proyecto y ejecuta:
 ```
-php artisan process:xml-files
+php artisan process:xml-files 
 ```
 
 El comando buscará los archivos XML en el directorio `public/xml` y los procesará en segundo plano.
+
+Si deseas procesar solo los archivos XML por RFC, puedes ejecutar el comando con el argumento `rfc`:
+```
+php artisan process:xml-files rfc
+```
 
 Asegúrate de tener configurada una cola llamada 'xml' en tu archivo `config/queue.php` para que los trabajos se manejen correctamente.
 

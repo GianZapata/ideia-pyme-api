@@ -13,7 +13,10 @@ use Illuminate\Support\Facades\DB;
 
 class ClientsController extends Controller {
 
-    public function obtenerTop5Clientes( $rfc ) {
+    public function obtenerTop5Clientes( Request $request ) {
+        $rfc = $request->rfc;
+
+        if( !$rfc ) return response()->json(['message' => 'El RFC es requerido'], 400);
 
         $top5Clientes = Emisor::select(
             'facturas.receptor_id',
@@ -24,7 +27,7 @@ class ClientsController extends Controller {
             DB::raw('SUM(comprobantes.total) AS total'),
             DB::raw('MIN(comprobantes.fecha) AS fecha_minima'),
             DB::raw('MAX(comprobantes.fecha) AS fecha_maxima'),
-            DB::raw('TIMESTAMPDIFF(MONTH, MIN(comprobantes.fecha), CURDATE()) / 12 AS antiguedad'),
+            DB::raw('FLOOR(TIMESTAMPDIFF(MONTH, MIN(comprobantes.fecha), CURDATE()) / 12) AS antiguedad'),
             DB::raw('CASE WHEN TIMESTAMPDIFF(MONTH, MAX(comprobantes.fecha), CURDATE()) > 1 THEN "noactivo" ELSE "activo" END AS estado')
         )
         ->leftJoin('facturas', 'emisores.id', '=', 'facturas.emisor_id')
@@ -41,7 +44,10 @@ class ClientsController extends Controller {
         ]);
     }
 
-    public function obtenerDiversificacionClientes( $rfc ) {
+    public function obtenerDiversificacionClientes( Request $request ) {
+        $rfc = $request->rfc;
+
+        if( !$rfc ) return response()->json(['message' => 'El RFC es requerido'], 400);
         $totalFacturacion = Emisor::leftJoin('facturas', 'emisores.id', '=', 'facturas.emisor_id')
             ->leftJoin('comprobantes', 'facturas.id', '=', 'comprobantes.factura_id')
             ->where('emisores.rfc', $rfc)
@@ -56,7 +62,7 @@ class ClientsController extends Controller {
                 DB::raw('SUM(comprobantes.total) AS total'),
                 DB::raw('MIN(comprobantes.fecha) AS fecha_minima'),
                 DB::raw('MAX(comprobantes.fecha) AS fecha_maxima'),
-                DB::raw('TIMESTAMPDIFF(MONTH, MIN(comprobantes.fecha), CURDATE()) / 12 AS antiguedad'),
+                DB::raw('FLOOR(TIMESTAMPDIFF(MONTH, MIN(comprobantes.fecha), CURDATE()) / 12) AS antiguedad'),
                 DB::raw('CASE WHEN TIMESTAMPDIFF(MONTH, MAX(comprobantes.fecha), CURDATE()) > 1 THEN "noactivo" ELSE "activo" END AS estado')
             )
             ->leftJoin('facturas', 'emisores.id', '=', 'facturas.emisor_id')
