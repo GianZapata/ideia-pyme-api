@@ -325,7 +325,7 @@ class ClientController extends Controller
         }
 
         $client = Client::where('id', $clientId)
-            ->with('user','report','saludFinancieras')
+            ->with('user','report.partners','saludFinancieras')
             ->first();
         // $client = Client::where('id', $clientId)
         //     ->where('user_id', $authUser->id)

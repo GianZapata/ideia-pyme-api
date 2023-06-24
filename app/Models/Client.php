@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use App\Services\FinancialHealthService;
@@ -46,6 +47,9 @@ class Client extends Model
         'sector_actividad_name',
         'has_reports',
         'can_check_report',
+        'municipality_name',
+        'state_name',
+        'country_name'
     ];
 
     protected $fillable = [
@@ -64,6 +68,40 @@ class Client extends Model
         'country',
         'city',
     ];
+
+    public function getMunicipalityNameAttribute() {
+        $federalEntities = config('federal_entities');
+
+        // Encuentra la entidad federal (estado) que coincida con el estado de la instancia actual
+        $federalEntity = collect($federalEntities)->firstWhere('slug', $this->state);
+
+        // Si encontramos la entidad federal, entonces procedemos a buscar el municipio
+        if ($federalEntity) {
+            // Iteramos a través de los municipios de la entidad federal encontrada
+            foreach ($federalEntity['municipalities'] as $municipality) {
+                // Si el código del municipio coincide con el municipio de la instancia actual,
+                // retornamos el nombre del municipio
+                if ($municipality['code'] == $this->municipality) {
+                    return Str::title($municipality['name']);
+                }
+            }
+        }
+
+        // Si no encontramos ni la entidad federal ni el municipio, retornamos el valor de municipio de la instancia actual
+        return Str::title($this->municipality) ?? null;
+    }
+    public function getStateNameAttribute() {
+        $federalEntities = config('federal_entities');
+        $federalEntity = collect($federalEntities)->firstWhere('slug', $this->state);
+        $state = $federalEntity['state'] ?? null;
+        return Str::title($state) ?? null;
+    }
+
+    public function getCountryNameAttribute() {
+        $countries = config('countries');
+        $country = $countries[$this->country] ?? null;
+        return Str::title($country) ?? null;
+    }
 
     public function hasReports(): Attribute
     {
