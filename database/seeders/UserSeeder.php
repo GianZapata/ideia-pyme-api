@@ -12,6 +12,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
@@ -62,21 +63,36 @@ class UserSeeder extends Seeder
             $imagePath = public_path("img/profile-images/{$imageFilename}");
             $fileContents = file_get_contents($imagePath);
 
-            $attachment = new Attachment;
-            $attachment->original_name = $imageFilename;
-            $attachment->mime = 'image/png';
-            $attachment->extension = 'png';
-            $attachment->size = strlen($fileContents);
-            $attachment->path = 'user-profile-images/';
-            $attachment->disk = 'public';
-            $attachment->save();
+            $name = Str::uuid();
+            $pathToSave = "user-profile-images/";
+            $diskToSave = "public";
+            $imageNumber = rand(1, 23);
+            $imageFilename = $imageNumber !== 23 ? "profile-picture-{$imageNumber}.png" : "default-profile.png";
+            $imagePath = public_path("img/profile-images/{$imageFilename}");
+            $fileContents = file_get_contents($imagePath);
+            $hash = md5($fileContents);
 
+            /** @var \App\Models\Attachment $attachment **/
+            $attachment = Attachment::create([
+                'name' => $name,
+                'original_name' => $imageFilename,
+                'mime' =>'image/png',
+                'extension' => 'png',
+                'size' => strlen($fileContents),
+                'sort' => 0,
+                'path' => $pathToSave,
+                'description' => null,
+                'alt' => null,
+                'hash' => $hash,
+                'disk' => $diskToSave,
+                'group' => null,
+            ]);
             Storage::disk('public')->put("user-profile-images/{$attachment->name}.{$attachment->extension}", $fileContents);
 
-            $userProfileImage = new UserProfileImage;
-            $userProfileImage->user_profile_id = $userProfile->id;
-            $userProfileImage->attachment_id = $attachment->id;
-            $userProfileImage->save();
+            $userProfileImage = UserProfileImage::create([
+                'user_profile_id' => $userProfile->id,
+                'attachment_id' => $attachment->id,
+            ]);
 
             $userProfile->profileImage()->save($userProfileImage);
         }
