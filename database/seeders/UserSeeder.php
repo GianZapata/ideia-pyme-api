@@ -24,42 +24,42 @@ class UserSeeder extends Seeder
 
         if(!$seedUser) {
             $adminRole = Role::firstOrCreate(['name' => 'admin']);
-            /** @var \App\Models\User $user **/
-            // Crear un usuario y asignarle el rol de administrador
-            User::factory()->create([
-                'name' => 'Gian',
-                'user_name' => 'gian.zapata',
-                'email' => 'gian@gian.com',
-                'password' => Hash::make('Abc123456!'),
-                'email_verified_at' => now(),
-            ])->each(function ($user) use ($adminRole) {
 
-                /** @var \App\Models\UserProfile $userProfile **/
-                $userProfile = UserProfile::factory()->create(['user_id' => $user->id]);
-                $imageNumber = rand(1, 23);
-                $imageFilename = $imageNumber !== 23 ? "profile-picture-{$imageNumber}.png" : "default-profile.png";
-                $imagePath = public_path("img/profile-images/{$imageFilename}");
-                $fileContents = file_get_contents($imagePath);
+            $user = new User;
+            $user->name = 'Gian';
+            $user->user_name = 'gian.zapata';
+            $user->email = 'gian@gian.com';
+            $user->password = Hash::make('Abc123456!');
+            $user->email_verified_at = now();
+            $user->save();
+            $user->assignRole($adminRole);
 
-                /** @var \App\Models\Attachment $attachment **/
-                $attachment = Attachment::factory()->create([
-                    'original_name' => $imageFilename,
-                    'mime' => 'image/png',
-                    'extension' => 'png',
-                    'size' => strlen($fileContents),
-                    'path' => 'user-profile-images/',
-                    'disk' => 'public',
-                ]);
+            $userProfile = new UserProfile;
+            $userProfile->user_id = $user->id;
+            $userProfile->save();
 
-                Storage::disk('public')->put("user-profile-images/{$attachment->name}.{$attachment->extension}", $fileContents);
-                $userProfileImage = UserProfileImage::factory()->create([
-                    'user_profile_id' => $userProfile->id,
-                    'attachment_id' => $attachment->id,
-                ]);
-                $userProfile->profileImage()->save($userProfileImage);
-                $user->assignRole($adminRole);
+            $imageNumber = rand(1, 23);
+            $imageFilename = $imageNumber !== 23 ? "profile-picture-{$imageNumber}.png" : "default-profile.png";
+            $imagePath = public_path("img/profile-images/{$imageFilename}");
+            $fileContents = file_get_contents($imagePath);
 
-            });
+            $attachment = new Attachment;
+            $attachment->original_name = $imageFilename;
+            $attachment->mime = 'image/png';
+            $attachment->extension = 'png';
+            $attachment->size = strlen($fileContents);
+            $attachment->path = 'user-profile-images/';
+            $attachment->disk = 'public';
+            $attachment->save();
+
+            Storage::disk('public')->put("user-profile-images/{$attachment->name}.{$attachment->extension}", $fileContents);
+
+            $userProfileImage = new UserProfileImage;
+            $userProfileImage->user_profile_id = $userProfile->id;
+            $userProfileImage->attachment_id = $attachment->id;
+            $userProfileImage->save();
+
+            $userProfile->profileImage()->save($userProfileImage);
         }
     }
 }
