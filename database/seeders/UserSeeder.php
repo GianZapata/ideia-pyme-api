@@ -20,23 +20,42 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $seedUser = User::where('email', 'gian@gian.com')->first();
+        $users = [
+            [
+                'name' => 'Gian',
+                'user_name' => 'gian.zapata',
+                'email' => 'gian@gian.com',
+            ],
+            [
+                'name' => 'Bruno',
+                'user_name' => 'bruno.mendoza',
+                'email' => 'bruno@bruno.com',
+            ],
+            [
+                'name' => 'Antwan',
+                'user_name' => 'antwan.hernandez',
+                'email' => 'antwan@antwan.com',
+            ],
+        ];
 
-        if(!$seedUser) {
-            $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        foreach ($users as $key => $user) {
+            $seedUser = User::where('email', $user['email'])->first();
+            if($seedUser) continue;
 
-            $user = new User;
-            $user->name = 'Gian';
-            $user->user_name = 'gian.zapata';
-            $user->email = 'gian@gian.com';
-            $user->password = Hash::make('Abc123456!');
-            $user->email_verified_at = now();
-            $user->save();
+            $user = User::create([
+                'name' => $user['name'],
+                'user_name' => $user['user_name'],
+                'email' => $user['email'],
+                'password' => Hash::make('Abc123456!'),
+                'email_verified_at' => now()
+            ]);
             $user->assignRole($adminRole);
 
-            $userProfile = new UserProfile;
-            $userProfile->user_id = $user->id;
-            $userProfile->save();
+            $userProfile = UserProfile::create([
+                'user_id' => $user->id,
+                'last_name' => '',
+            ]);
 
             $imageNumber = rand(1, 23);
             $imageFilename = $imageNumber !== 23 ? "profile-picture-{$imageNumber}.png" : "default-profile.png";
