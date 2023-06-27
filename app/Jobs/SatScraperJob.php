@@ -3,12 +3,14 @@
 namespace App\Jobs;
 
 use App\Http\Controllers\SatDownloader\SatDownloaderController;
+use App\Models\SatReport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 
 class SatScraperJob implements ShouldQueue
@@ -49,6 +51,17 @@ class SatScraperJob implements ShouldQueue
             // SatDownloaderController::executeQuery($rfc, $password, $year, $downloadType, $reportId);
             SatDownloaderController::downloadYear($rfc, $password, $year);
             Log::info('Se ejecutó el job correctamente');
+
+            Artisan::call('process:xml-files', [
+                'rfc' => $rfc,
+            ]);
+
+            $satReport = SatReport::where('id', $reportId)->first();
+            $satReport->total_tasks_completed = intval($satReport->total_tasks_completed) + 1;
+            $satReport->save();
+
+            Log::info('Se ejecutó el job de procesamiento de archivos correctamente');
+
             return;
         } catch (\Throwable $th) {
             Log::info('Error al iniciar sesión con las credenciales en Job');
