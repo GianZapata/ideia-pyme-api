@@ -12,27 +12,35 @@ use Illuminate\Support\Facades\Storage;
 
 class ClientSeeder extends Seeder
 {
+    private static $sectorActividad = [
+        "AGRICULTURA_Y_GANADERIA",
+        "INDUSTRIA_EXTRACTIVA",
+        "INDUSTRIA_MANUFACTURERA",
+        "ENERGIA",
+        "AGUAS_Y_SANEAMIENTO",
+        "CONSTRUCCION",
+        "COMERCIAL",
+        "TRANSPORTE",
+        "HOTELERIA",
+        "COMUNICACIÓN",
+        "FINANZAS_Y_SEGUROS",
+        "ACTIVIDADES_INMOBILIARIAS",
+        "ACTIVIDADES_PROFESIONALES",
+        "OTROS_SERVICIOS",
+        "OTRAS_ACTIVIDADES"
+    ];
+
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        // $user = User::find(1);
-        // if(!$user) return;
-
-        // $rfcEmisores = Emisor::all();
-        // $rfcReceptores = Receptor::all();
-        // $rfcs = $rfcEmisores->concat($rfcReceptores);
 
         $files = collect(Storage::allFiles("public/xml"));
 
         $rfcs = $files->map(function ($file) {
-            // Obtén el path del archivo y divídelo en segmentos.
-            $segments = explode('/', $file);
-
-            // El RFC debería ser el tercer segmento en tu estructura de archivos.
-            $rfc = $segments[2];
-
+            $segments = explode('/', $file);   // Obtén el path del archivo y divídelo en segmentos.
+            $rfc = $segments[2]; // El RFC debería ser el tercer segmento en tu estructura de archivos.
             return $rfc;
         })->unique();
 
@@ -40,10 +48,32 @@ class ClientSeeder extends Seeder
 
         /** @var \App\Models\Client $client **/
         foreach ($emisores as $rfc) {
-            Client::factory()->create([
+
+            $countries = config('countries');
+
+            $country = 'Mexico'; // Reemplaza esto con el país que prefieras
+
+            $federalEntities = collect(config('federal_entities'));
+            $randomEntity = $federalEntities->first(); // Cambiado a first() en lugar de random()
+            $stateSlug = $randomEntity['slug'];
+
+            $randomMunicipality = collect($randomEntity['municipalities'])->first(); // Cambiado a first() en lugar de random()
+            $municipalityCode = $randomMunicipality['code'];
+
+            Client::create([
                 'rfc' => $rfc->rfc,
                 'name' => $rfc->nombre,
-                // 'user_id' => $user->id,
+                'score'             => 500,
+                'anioConstitucion'  => 2000, // Año de constitución
+                'sector_actividad'  => self::$sectorActividad[array_rand(self::$sectorActividad)],
+                'street'            => 'Calle 1',
+                'house_number'      => '10',
+                'neighborhood'      => 'Colonia 1',
+                'postal_code'       => '00000',
+                'city'              => 'Ciudad 1',
+                'country'           => $country,
+                'state'             => $stateSlug,
+                'municipality'      => $municipalityCode
             ]);
         }
     }
