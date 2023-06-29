@@ -126,16 +126,16 @@ class ClientController extends Controller
                 ], 400);
             }
 
-            $authUserId = $authUser->id;
+            // $authUserId = $authUser->id;
 
-            if( $client->user_id != $authUserId ){
-                return response()->json([
-                    'message' => 'No se encontró el usuario autenticado.',
-                    'errors' => [
-                        'auth' => 'No se encontró el usuario autenticado.'
-                    ]
-                ], 400);
-            }
+            // if( $client->user_id != $authUserId ){
+            //     return response()->json([
+            //         'message' => 'No se encontró el usuario autenticado.',
+            //         'errors' => [
+            //             'auth' => 'No se encontró el usuario autenticado.'
+            //         ]
+            //     ], 400);
+            // }
 
             $client->update([
                 'name'              => $clientRequest['name'] ?? $client->name,
