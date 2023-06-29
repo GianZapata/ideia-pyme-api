@@ -49,9 +49,8 @@ class ClientSeeder extends Seeder
         /** @var \App\Models\Client $client **/
         foreach ($emisores as $rfc) {
 
-            $countries = config('countries');
-
-            $country = 'Mexico'; // Reemplaza esto con el país que prefieras
+            $countries = collect(config('countries'));
+            $country = $countries->keys()->random();
 
             $federalEntities = collect(config('federal_entities'));
             $randomEntity = $federalEntities->first(); // Cambiado a first() en lugar de random()
